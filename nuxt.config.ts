@@ -10,41 +10,31 @@ export default defineNuxtConfig({
   ],
   pwa: {
     registerType: "autoUpdate",
-    devOptions: {
-      enabled: true,
-      type: 'classic'
-    },
     manifest: {
-      name: 'word-guesser',
-      short_name: 'word-G',
-      description: 'Offline account manager',
+      name: 'Word Guesser',
+      short_name: 'Word-G',
+      description: 'Offline multiplayer word guesser',
       display: 'standalone',
-      start_url: '/', 
+      start_url: '/',
       theme_color: '#ffffff',
-      background_color: '#ffffff', 
+      background_color: '#ffffff',
       icons: [
-        {
-          src: 'pwa-192x192.png', 
-          sizes: '192x192',
-          type: 'image/png',
-          purpose: 'any'
-        },
-
-        {
-          src: 'pwa-512x512.png', 
-          sizes: '512x512',
-          type: 'image/png',
-          purpose: 'any maskable'
-        }
+        { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
       ]
     },
     workbox: {
-      globPatterns: process.env.NODE_ENV === 'development' ? [] : ['**/*.{js,css,html,png,svg,ico,mjs}'],
-      navigateFallback: '/',
+      // This tells Workbox to cache all your bundled code and images
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      // Important for SPAs: ensures page refreshes work offline
+      navigateFallback: '/', 
       cleanupOutdatedCaches: true,
       clientsClaim: true,
       skipWaiting: true
     },
+    devOptions: {
+      enabled: false // Keep this false so caching doesn't ruin your dev experience
+    }
   },
   css: ['~/assets/css/main.css'],
   vite: {
