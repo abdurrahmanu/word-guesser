@@ -33,6 +33,8 @@ const ALL_WORDS = [
 export const useGameStore = defineStore('game', () => {
   const team1Score = ref(0)
   const team2Score = ref(0)
+  const teamOne = ref('Team One')
+  const teamTwo = ref('Team Two')
   const currentTeamTurn = ref<1 | 2>(1) // 1 or 2
   const settings = ref({
     wordCount: 16,
@@ -157,6 +159,8 @@ export const useGameStore = defineStore('game', () => {
     // State
     team1Score,
     team2Score,
+    teamOne,
+    teamTwo,
     currentTeamTurn,
     settings,
     gameWords,

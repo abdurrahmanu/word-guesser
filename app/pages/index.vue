@@ -1,23 +1,28 @@
 <template>
-  <main class="flex flex-col items-center justify-center min-h-screen p-6 bg-slate-900 text-white text-center">
-    <h1 class="text-4xl font-extrabold mb-4 tracking-tight">Word<span class="text-indigo-400">Sync</span></h1>
-    <p class="text-slate-300 max-w-110 leading-relaxed">
-      Welcome! Four players should split into two teams. For team A, one player picks a hidden word. Your teammate must then describe that word to you. You should correctly guess the word before the timer runs out!
-    </p>
-    <p class="text-red-300 mb-5 py-1 max-w-110">
-      You cannot use the actual word in the explanation, and also not its direct opposite. eg. opposite of national
-    </p>
-        
-    <div class="bg-slate-800 p-5 rounded-2xl w-full max-w-120 shadow-xl mb-8 border border-slate-700">
+  <main class="min-h-screen p-6 flex flex-col bg-slate-900 text-white text-center">
+    <h1 class="text-4xl font-extrabold mb-4 tracking-tight">Words<span class="text-indigo-400">Guesser</span></h1>
+
+    <div class="flex flex-col items-center py-10 space-y-3">
+      <div class="text-slate-300 max-w-110 leading-relaxed space-y-2">
+        <h1 class="text-2xl font-bold">How to play</h1>
+        <p class="text-justify">Four players will split into two teams. For team A, one player clicks an index that holds a hidden word. The second player must then describe that word to the first player. The first player should correctly guess the word with the explanation before the timer runs out! The team has the option of forfeiting their turn. There is a transfer of turn after timeout.</p>
+      </div>
+      <p class="text-red-300 rounded-md my-3 ring ring-red-400 mb-5 py-1 max-w-110">You cannot use the actual word in the explanation. eg. when the word is national you should not use international in your explanation. Turn gets skipped with such mistake!</p>
+    
+    <div class="bg-slate-800 p-5 rounded-2xl mt-3 w-full max-w-120 shadow-xl mb-8 border border-slate-700">
       <h2 class="font-bold text-lg mb-2">ROLES</h2>
-      <ul class="text-center text-sm text-slate-300 space-y-2 mb-4">
-        <li><strong class="text-indigo-400">Chooser:</strong> Picks an easy index. Answers the word.</li>
-        <li><strong class="text-indigo-400">Explainer:</strong> Clicks to reveal the word. Explains it to the Chooser.</li>
+      <ul class="text-sm text-slate-300 space-y-2 mb-4">
+        <li><strong class="text-indigo-400">REVEALER</strong> Picks an index. Says the word.</li>
+        <li><strong class="text-indigo-400">EXPLAINER</strong> Opens the word and then explains it to the Chooser.</li>
       </ul>
     </div>
+  </div>
 
-    <button @click="$router.push('/setup')" class="w-full max-w-sm bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95">
+  <div class="flex-1 flex flex-col justify-end items-center">
+    <button @click="$router.push('/setup')" class="w-full max-w-110 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95">
       Next
     </button>
-  </main>
+  </div>
+</main>
+
 </template>

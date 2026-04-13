@@ -2,8 +2,8 @@
   <main class="min-h-screen bg-slate-900 flex flex-col font-sans select-none">
     <header class="bg-slate-800 p-4 shadow-md rounded-b-3xl z-10 relative">
       <div class="flex justify-between items-center mb-4">
-        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="[store.currentTeamTurn === 1 ? 'bg-blue-600 text-white shadow-lg ring-2 ring-blue-300 animate-bounce' : 'bg-slate-700 text-slate-400']">
-          <span class="text-xs font-bold uppercase tracking-wider">Team 1</span>
+        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="[store.currentTeamTurn === 1 ? 'bg-blue-600 text-white shadow-lg ring-2 ring-blue-300' : 'bg-slate-700 text-slate-400']">
+          <span class="font-bold uppercase tracking-wider">{{ teamOne }}</span>
           <span class="text-3xl font-black">{{ store.team1Score }}</span>
         </div>
         
@@ -11,8 +11,8 @@
           ✕
         </button>
 
-        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="store.currentTeamTurn === 2 ? 'bg-red-600 text-white shadow-lg ring-2 ring-red-300 animate-bounce' : 'bg-slate-700 text-slate-400'">
-          <span class="text-xs font-bold uppercase tracking-wider">Team 2</span>
+        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="store.currentTeamTurn === 2 ? 'bg-red-600 text-white shadow-lg ring-2 ring-red-300' : 'bg-slate-700 text-slate-400'">
+          <span class="font-bold uppercase tracking-wider">{{ teamTwo }}</span>
           <span class="text-3xl font-black">{{ store.team2Score }}</span>
         </div>
       </div>
@@ -48,13 +48,18 @@
       <div v-if="activeWord" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click.stop></div>
         
-        <div class="relative w-full max-w-sm h-[85%] bg-white rounded-3xl shadow-2xl flex flex-col p-6 overflow-hidden">
+        
+        <div class="relative w-full max-w-sm h-[85%] bg-white rounded-3xl shadow-2xl flex flex-col p-6 pt-4 overflow-hidden">
+          <div class="mx-auto w-fit">
+            <button v-if="!isWordRevealed" @click="closeModalWithoutSwitchingTurn" class="font-mono text-3xl font-bold text-red-700 h-10 w-10 text-center ring ring-red-600 hover:text-white hover:bg-red-800 rounded-full">X</button>
+          </div>
           
-          <div class="text-center mt-4">
-            <span class="text-6xl font-black tabular-nums" :class="timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-slate-800'">
+          <div class="text-center space-y-1">
+              <span class="text-6xl font-black tabular-nums" :class="timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-slate-800'">
               {{ timeLeft }}s
             </span>
           </div>
+
 
           <div class="flex-1 flex flex-col items-center justify-center">
             <h2 
@@ -75,13 +80,23 @@
               SHOW WORD
             </button>
 
-            <button 
-              v-if="isWordRevealed && !timeUp" 
+            <div class="space-y-3" v-if="isWordRevealed && !timeUp">
+
+              <button 
               @click="markAnswered"
               class="w-full bg-emerald-500 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-emerald-500/40"
-            >
+              >
               ANSWERED!
             </button>
+
+              <button 
+              @click="startTransferTurn"
+              class="w-full bg-red-500 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-emerald-500/40">
+              FORFEIT TURN
+            </button>
+            
+            </div>
+            
 
             <template v-if="timeUp">
               <div class="text-center text-red-500 font-bold mb-4 uppercase tracking-widest animate-bounce">Time's Up!</div>
@@ -108,7 +123,7 @@
     </Teleport>
 
     <Teleport to="body">
-      <div v-if="store.isGameOver || store.earlyWinner" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/95 backdrop-blur-md">
+      <div v-if="store.isGameOver || store.earlyWinner" class="fixed inset-0 z-60 flex items-center justify-center p-6 bg-slate-900/95 backdrop-blur-md">
         <div class="bg-white p-8 rounded-3xl shadow-2xl text-center w-full max-w-sm relative">
           
           <button v-if="store.earlyWinner && !store.isGameOver" @click="store.continueAfterEarlyWin = true" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 rounded-full text-slate-500 font-bold hover:bg-slate-200">✕</button>
@@ -142,6 +157,7 @@
 
 <script setup>
 const store = useGameStore()
+const {teamOne, teamTwo} = storeToRefs(store)
 
 onMounted(() => {
   store.loadState()
@@ -224,6 +240,10 @@ const closeModalAndSwitchTurn = () => {
   store.switchTurn()
   // Disable transfer mode for next word
   isTransferMode.value = false 
+}
+
+const closeModalWithoutSwitchingTurn = () => {
+  activeWord.value = null
 }
 
 onUnmounted(() => {
