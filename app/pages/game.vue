@@ -2,7 +2,7 @@
   <main class="min-h-screen bg-slate-900 flex flex-col font-sans select-none">
     <header class="bg-slate-800 p-4 shadow-md rounded-b-3xl z-10 relative">
       <div class="flex justify-between items-center mb-4">
-        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="store.currentTeamTurn === 1 ? 'bg-blue-600 text-white shadow-lg ring-2 ring-blue-300' : 'bg-slate-700 text-slate-400'">
+        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="[store.currentTeamTurn === 1 ? 'bg-blue-600 text-white shadow-lg ring-2 ring-blue-300 animate-bounce' : 'bg-slate-700 text-slate-400']">
           <span class="text-xs font-bold uppercase tracking-wider">Team 1</span>
           <span class="text-3xl font-black">{{ store.team1Score }}</span>
         </div>
@@ -11,13 +11,13 @@
           ✕
         </button>
 
-        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="store.currentTeamTurn === 2 ? 'bg-red-600 text-white shadow-lg ring-2 ring-red-300' : 'bg-slate-700 text-slate-400'">
+        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="store.currentTeamTurn === 2 ? 'bg-red-600 text-white shadow-lg ring-2 ring-red-300 animate-bounce' : 'bg-slate-700 text-slate-400'">
           <span class="text-xs font-bold uppercase tracking-wider">Team 2</span>
           <span class="text-3xl font-black">{{ store.team2Score }}</span>
         </div>
       </div>
 
-      <div class="flex justify-center gap-4 text-xs text-slate-300 font-medium">
+      <div class="flex justify-center gap-4 text-sm text-slate-300 font-medium">
         <div class="bg-slate-900 px-3 py-1 rounded-full">Total: {{ store.settings.wordCount }}</div>
         <div class="bg-slate-900 px-3 py-1 rounded-full">Used: {{ store.usedIndexes.length }}</div>
         <div v-if="store.settings.allowTransfer" class="bg-slate-900 px-3 py-1 rounded-full">Transferred: {{ store.transferredCount }}</div>
@@ -25,19 +25,19 @@
     </header>
 
     <div class="flex-1 p-6 overflow-y-auto">
-      <div class="text-center mb-6 text-slate-400 font-medium">
-        <span class="text-white font-bold">Team {{ store.currentTeamTurn }}'s</span> Turn - Select an index
-      </div>
+      <p class="text-center uppercase font-bold mb-6 text-slate-400">
+        Select an index
+      </p>
       <div class="grid grid-cols-4 gap-3">
         <button 
           v-for="(word, index) in store.gameWords" 
           :key="index"
           @click="openModal(index, word)"
           :disabled="store.usedIndexes.includes(index)"
-          class="aspect-square rounded-2xl flex items-center justify-center text-2xl font-black transition-all shadow-sm"
+          class="aspect-square rounded-2xl flex items-center justify-center text-5xl font-black transition-all shadow-sm"
           :class="store.usedIndexes.includes(index) 
             ? 'bg-slate-800 text-slate-600 opacity-50 cursor-not-allowed' 
-            : 'bg-indigo-600 text-white hover:bg-indigo-500 active:scale-95 shadow-indigo-500/30 shadow-lg'"
+            : 'ring-2 ring-cyan-500/50 bg-animated-gradient shadow-[0_0_20px_rgba(6,182,212,0.4)] text-white hover:bg-cyan-800 active:scale-95 shadow-indigo-500/30'"
         >
           {{ index + 1 }}
         </button>
