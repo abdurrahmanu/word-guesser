@@ -19,9 +19,9 @@ export default defineNuxtConfig({
       short_name: 'word-G',
       description: 'Offline account manager',
       display: 'standalone',
-      start_url: '/', // Required by Chrome
-      theme_color: '#ffffff', // Required by Chrome
-      background_color: '#ffffff', // Highly recommended
+      start_url: '/', 
+      theme_color: '#ffffff',
+      background_color: '#ffffff', 
       icons: [
         {
           src: 'pwa-192x192.png', 
