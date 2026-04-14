@@ -268,6 +268,41 @@ const playForfeitSound = () => {
   }
 };
 
+const playTransferTurnSound = () => {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    // A 'sine' wave is very smooth and clean—perfect for subtle UI sounds
+    osc.type = 'sine'; 
+
+    osc.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    const now = ctx.currentTime;
+
+    // --- Pitch Envelope (The Bloop) ---
+    // Start on one note, then quickly jump up a bit higher
+    osc.frequency.setValueAtTime(440, now);           // Note A4
+    osc.frequency.setValueAtTime(587.33, now + 0.05); // Note D5 (jumps up after 50ms)
+
+    // --- Volume Envelope (The Snappy Fade) ---
+    // Total duration is extremely short (0.15 seconds)
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.5, now + 0.02); // Quick ramp up to avoid clicks
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.15); // Fast fade out
+
+    osc.start(now);
+    osc.stop(now + 0.15);
+  } catch(e) { 
+    console.error("Audio API failed", e); 
+  }
+};
+
+// Example: document.getElementById('transferBtn').addEventListener('click', playTransferTurnSound);
+
 const openModal = (index, text) => {
   clickedIndex.value = index
   activeWord.value = { index, text }
@@ -319,6 +354,7 @@ const killWordAndTurn = () => {
 
 const startTransferTurn = () => {
   isTransferMode.value = true
+  playTransferTurnSound()
   timeUp.value = false
   timeLeft.value = store.settings.timerSeconds / 2 // Optionally give them half time, or full time
   revealAndStartTimer()
