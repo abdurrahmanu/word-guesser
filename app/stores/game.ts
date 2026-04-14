@@ -34,6 +34,7 @@ export const useGameStore = defineStore('game', () => {
   const teamOne = ref('Team One')
   const teamTwo = ref('Team Two')
   const currentTeamTurn = ref<1 | 2>(1) // 1 or 2
+  const indexWinner = reactive<Record<string | number, any>>({})
   const settings = ref({
     wordCount: 16,
     timerSeconds: 35,
@@ -76,9 +77,33 @@ export const useGameStore = defineStore('game', () => {
     return null;
   })
 
-  // --- Actions ---
-  function initGame(newSettings: { wordCount: number, timerSeconds: number, allowTransfer: boolean }) {
-    settings.value = newSettings;
+
+  function initGame(newSettings: { wordCount: 16, timerSeconds: 35, allowTransfer: true }) {
+    clearState(true)
+    console.log(newSettings);
+    
+    shuffledArray.value = shuffleArray([...ALL_WORDS])
+
+    let newWordsLength = [...new Set(newWordsArray.value)].length
+    let remaining = newSettings.wordCount - newWordsLength
+
+    // Randomly select words for this session
+    const shuffledNewWords = [...([...new Set(newWordsArray.value)])].sort(() => 0.5 - Math.random());
+    const shuffledArrayWords = [...shuffledArray.value].sort(() => 0.5 - Math.random());
+    
+    if (remaining > -1 && remaining < newSettings.wordCount) {
+      console.log('wow');
+      
+      gameWords.value = [...new Set([...shuffledNewWords, ...shuffledArrayWords.slice(0, remaining)].sort(() => 0.5 - Math.random()))]
+    } else {       
+      gameWords.value = [...new Set([...shuffledNewWords, ...shuffledArrayWords].slice(0, newSettings.wordCount))]
+    }
+
+    newWordsArray.value = []
+    saveState();
+  }
+
+  function clearState(init ?: boolean) {
     team1Score.value = 0;
     team2Score.value = 0;
     currentTeamTurn.value = 1;
@@ -87,20 +112,19 @@ export const useGameStore = defineStore('game', () => {
     transferredCount.value = 0;
     isGameOver.value = false;
     continueAfterEarlyWin.value = false;
-
-    shuffledArray.value = shuffleArray([...ALL_WORDS], [...newWordsArray.value])
-
-    // Randomly select words for this session
-    const shuffled = [...shuffledArray.value].sort(() => 0.5 - Math.random());
-    gameWords.value = shuffled.slice(0, newSettings.wordCount);
+    newWords.value = ''
+    shuffledArray.value = []
     
-    saveState();
+    if (!init) saveState();
   }
 
-  function recordCorrectAnswer(team: number) {
+  function recordCorrectAnswer(team: number, index: number) {
+    let sIndex = `${index}`
+    indexWinner[sIndex] = currentTeamTurn.value
+
     if (team === 1) team1Score.value++;
     else team2Score.value++;
-  }
+   }
 
   function markWordUsed(index: number, killed ?: boolean) {
     if (!killed && !usedIndexes.value.includes(index)) {
@@ -205,6 +229,7 @@ export const useGameStore = defineStore('game', () => {
     gameWords,
     usedIndexes,
     transferredCount,
+    indexWinner,
     isGameOver,
     continueAfterEarlyWin,
     
@@ -216,6 +241,7 @@ export const useGameStore = defineStore('game', () => {
     
     // Actions
     initGame,
+    clearState,
     addWords,
     recordCorrectAnswer,
     markWordUsed,

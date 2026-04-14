@@ -1,15 +1,20 @@
 <template>
   <main class="min-h-screen bg-slate-900 flex flex-col font-sans select-none">
     <header class="bg-slate-800 p-4 pb-1 shadow-md z-10 relative">
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between mb-4">
         <div class="flex flex-col items-center rounded-xl min-w-20" :class="[store.currentTeamTurn === 1 ? 'text-blue-500' : 'text-slate-400']">
           <span class="font-bold uppercase tracking-wider">{{ teamOne }}</span>
           <div class="w-full text-center text-5xl font-black rounded-b-xl">{{ store.team1Score }}</div>
         </div>
         
-        <button @click="$router.push('/')" class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-slate-300 hover:bg-red-500 hover:text-white transition-colors">
-          ✕
-        </button>
+        <div class="flex gap-4">
+          <button @click="$router.push('/setup')" class="px-4 py-1  rounded-md bg-slate-700 h-fit text-slate-300 hover:bg-red-500 hover:text-white transition-colors">
+            BACK
+          </button>
+          <button @click="restart" class="px-4 py-1  rounded-md bg-slate-700 h-fit text-slate-300 hover:bg-red-500 hover:text-white transition-colors">
+            RESTART
+          </button>
+        </div>
 
        <div class="flex flex-col items-center rounded-xl min-w-20" :class="[store.currentTeamTurn === 2 ? 'text-blue-500' : 'text-slate-400']">
           <span class="font-bold uppercase tracking-wider">{{ teamTwo }}</span>
@@ -20,7 +25,7 @@
       <div class="flex justify-center py-1 gap-4 text-sm text-slate-300 font-medium">
         <div class="bg-slate-900 px-5 py-1 rounded-md">Total: {{ store.settings.wordCount }}</div>
         <div class="bg-slate-900 px-5 py-1 rounded-md">Answered: {{ store.usedIndexes.length }}</div>
-        <div class="bg-slate-900 px-5 py-1 rounded-md">Killed: {{ store.killedIndexes.length }}</div>
+        <div class="bg-slate-900 px-5 py-1 rounded-md">Skipped: {{ store.killedIndexes.length }}</div>
         <!-- <div v-if="store.settings.allowTransfer" class="bg-slate-900 px-5 py-1 rounded-md">Transferred: {{ store.transferredCount }}</div> -->
       </div>
     </header>
@@ -29,6 +34,7 @@
       <p class="text-center uppercase font-bold mb-6 text-slate-400">
         Select an index
       </p>
+
       <div class="grid grid-cols-4 gap-3">
         <button 
           v-for="(word, index) in store.gameWords" 
@@ -37,9 +43,13 @@
           :disabled="store.usedIndexes.includes(index) || store.killedIndexes.includes(index)"
           class="aspect-square rounded-2xl flex items-center justify-center text-5xl font-black transition-all shadow-sm"
           :class="[store.usedIndexes.includes(index) 
-            ? 'bg-slate-800 text-slate-600 ring-2 ring-cyan-900 opacity-50 cursor-not-allowed' 
-            : store.killedIndexes.includes(index) ? 'cursor-not-allowed ring-2 ring-red-900/40 text-red-400/40' : 'ring-2 ring-cyan-500/50 bg-animated-gradient shadow-[0_0_20px_rgba(6,182,212,0.4)] text-white hover:bg-cyan-800 active:scale-95 shadow-indigo-500/30']">
-          {{ index + 1 }}
+            ? 'bg-slate-800 text-slate-200 ring-2 ring-cyan-900 opacity-50 cursor-not-allowed' 
+            : store.killedIndexes.includes(index) ? 'cursor-not-allowed ring-2 ring-red-900/40 text-red-400/70' : 'ring-2 ring-cyan-500/50 bg-animated-gradient shadow-[0_0_20px_rgba(6,182,212,0.4)] text-white hover:bg-cyan-800 active:scale-95 shadow-indigo-500/30']">
+          <span v-if="!store.usedIndexes.includes(index) && !store.killedIndexes.includes(index)">{{ index + 1 }} </span>
+          <div v-if="store.usedIndexes.includes(index) || store.killedIndexes.includes(index)" class="text-[18px] -rotate-45">
+            <p v-if="store.usedIndexes.includes(index)" class="text-green-400 text-xl">{{ store.indexWinner[index] === 1 ? '1' : '2' }}</p>
+            <p>{{ word }}</p>
+          </div>
         </button>
       </div>
     </div>
@@ -60,17 +70,17 @@
               </span>
             </div>
 
-            <p v-if="true" class="text-center py-10 text-xl font-black uppercase">{{ store.currentTeamTurn === 1 ? 'Team One' : 'Team Two'}}</p>
+            <p class="text-center py-10 text-xl font-black uppercase">{{ store.currentTeamTurn === 1 ? 'Team One' : 'Team Two'}}</p>
 
-            <p class="text-center w-fit top-10 relative mx-auto text-sm font-bold bg-amber-500 rounded-full px-10 py-1 -rotate-10 animate-pulse">BONUS</p>
+            <p v-if="isTransferMode" class="text-center w-fit top-10 relative mx-auto text-sm font-bold bg-amber-500 rounded-full px-10 py-1 -rotate-10 animate-pulse">BONUS</p>
 
             <div class="flex-1 flex flex-col items-center justify-center">
               <h2 
                 class="text-4xl sm:text-5xl font-black text-center text-slate-900 tracking-tight transition-all duration-300"
-                :class="isWordRevealed ? 'blur-none' : 'blur-xl select-none'"
-              >
+                :class="[isWordRevealed && 'blur-none', (!isWordRevealed || timeUp) && 'blur-xl select-none']">
                 {{ activeWord.text }}
               </h2>
+
               <p v-if="!isWordRevealed" class="text-slate-400 text-sm mt-4 font-bold text-center">Explainer, click below when ready</p>
             </div>
 
@@ -165,7 +175,9 @@
 
 <script setup>
 const store = useGameStore()
-const {teamOne, teamTwo} = storeToRefs(store)
+const {teamOne, teamTwo, settings, indexWinner} = storeToRefs(store)
+const {initGame} = store
+const clickedIndex = ref(null)
 
 onMounted(() => {
   store.loadState()
@@ -194,6 +206,7 @@ const playAlarm = () => {
 }
 
 const openModal = (index, text) => {
+  clickedIndex.value = index
   activeWord.value = { index, text }
   isWordRevealed.value = false
   timeLeft.value = store.settings.timerSeconds
@@ -222,18 +235,14 @@ const handleTimeout = () => {
 
 const markAnswered = () => {
   clearInterval(timerInterval)
-  
-  // Award point to the team who guessed it. 
-  // If we are in transfer mode, the opposing team gets it.
   let scoringTeam = store.currentTeamTurn
-  if (isTransferMode.value) {
-    scoringTeam = store.currentTeamTurn === 1 ? 2 : 1
-    store.transferredCount++
-  }
 
-  store.recordCorrectAnswer(scoringTeam)
+  if (isTransferMode.value) store.transferredCount++
+  
+  store.recordCorrectAnswer(scoringTeam, clickedIndex.value)
   store.markWordUsed(activeWord.value.index)
   closeModalAndSwitchTurn()
+  clickedIndex.value = null
 }
 
 const killWordAndTurn = () => {
@@ -259,14 +268,16 @@ const forfeitTurn = () => {
 
 const closeModalAndSwitchTurn = () => {
   activeWord.value = null
-  store.switchTurn()
-  // Disable transfer mode for next word
+  if (!isTransferMode.value) store.switchTurn()
   isTransferMode.value = false 
 }
 
-const closeModalWithoutSwitchingTurn = () => {
-  activeWord.value = null
+const restart = () => {
+  // clearState()
+  initGame(settings.value)
 }
+
+const closeModalWithoutSwitchingTurn = () => activeWord.value = null
 
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval)
