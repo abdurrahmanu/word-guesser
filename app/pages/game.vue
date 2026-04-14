@@ -186,6 +186,7 @@ const clickedIndex = ref(null)
 const showDefinition = ref(false)
 const winAudio = new Audio('/win.mp3')
 const revealAudio = new Audio('/reveal.wav')
+revealAudio.volume = 0.5
 
 onMounted(() => {
   store.loadState()
@@ -305,12 +306,11 @@ const playTransferTurnSound = () => {
 const playKillTurnSound = () => {
   if (!useSound.value) return
   try {
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
+const AudioContext = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioContext();
     const osc = ctx.createOscillator();
     const gainNode = ctx.createGain();
 
-    // A 'square' wave provides a harsh, buzzy tone that feels like an "error" or "stop"
     osc.type = 'square'; 
 
     osc.connect(gainNode);
@@ -318,18 +318,20 @@ const playKillTurnSound = () => {
 
     const now = ctx.currentTime;
 
-    // --- Pitch Envelope (The Zap/Thud) ---
-    // Start at a low pitch and drop aggressively down to almost nothing
-    osc.frequency.setValueAtTime(150, now);
-    osc.frequency.exponentialRampToValueAtTime(10, now + 0.2); 
+    // --- Pitch (The Motor Speed) ---
+    // Dropped to 15Hz. This is sub-audio, meaning you will hear
+    // individual, rapid clicks rather than a smooth tone.
+    osc.frequency.setValueAtTime(15, now); 
 
-    // --- Volume Envelope (The Abrupt Cut) ---
-    // Total duration is a very short and snappy 0.2 seconds
-    gainNode.gain.setValueAtTime(0.4, now); // Start at a moderate volume
-    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.2); // Crash out fast
+    // --- Volume Envelope (The Buzz) ---
+    // Bumped the volume slightly to 0.5 to ensure the heavy clicks punch through
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.5, now + 0.02); 
+    gainNode.gain.setValueAtTime(0.5, now + 0.25);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.3); 
 
     osc.start(now);
-    osc.stop(now + 0.2);
+    osc.stop(now + 0.3);
   } catch(e) { 
     console.error("Audio API failed", e); 
   }
@@ -337,44 +339,36 @@ const playKillTurnSound = () => {
 
 const vibrateOnIndexPress = () => {
   if (!useSound.value) return
-      if ("vibrate" in navigator) {
-        
-        navigator.vibrate([50, 100, 50]); 
-        console.log('wow');
-        
-      } else {
-        try {
+    try {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioContext();
     const osc = ctx.createOscillator();
     const gainNode = ctx.createGain();
 
-    // 'sawtooth' provides a harsh, rich texture—perfect for buzzing and zapping
-    osc.type = 'sawtooth'; 
+    // Changed to 'square' for a mechanical, phone-motor feel
+    osc.type = 'square'; 
 
     osc.connect(gainNode);
     gainNode.connect(ctx.destination);
 
     const now = ctx.currentTime;
 
-    // --- Pitch Envelope (The "Zooo" slide) ---
-    // Start very low (60Hz gives a physical vibration feel) and slide up rapidly
-    osc.frequency.setValueAtTime(60, now); 
-    osc.frequency.exponentialRampToValueAtTime(250, now + 0.3); 
+    // --- Pitch (The Motor Speed) ---
+    // A steady 75Hz creates a tight, convincing physical vibration sound.
+    // No sliding pitch this time!
+    osc.frequency.setValueAtTime(75, now); 
 
-    // --- Volume Envelope (The snappy "t" ending) ---
+    // --- Volume Envelope (The Buzz) ---
     gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.5, now + 0.02); // Instant buzz on
-    gainNode.gain.setValueAtTime(0.5, now + 0.25);          // Hold the buzz
-    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.3); // Sharp cutoff for the "t"
+    gainNode.gain.linearRampToValueAtTime(0.3, now + 0.02); // Fast ramp up
+    gainNode.gain.setValueAtTime(0.3, now + 0.25);          // Hold steady
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.3); // Sharp cutoff
 
     osc.start(now);
-    osc.stop(now + 0.3); // Total duration is a snappy 0.3 seconds
+    osc.stop(now + 0.3);
   } catch(e) { 
     console.error("Audio API failed", e); 
   }
-        console.log("Vibration not supported on this device.");
-      }
   };
 
 

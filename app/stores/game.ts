@@ -190,8 +190,9 @@ export const useGameStore = defineStore('game', () => {
         transferredCount: transferredCount.value,
         isGameOver: isGameOver.value,
         continueAfterEarlyWin: continueAfterEarlyWin.value,
-        killedIndexes: killedIndexes.value
-      }
+        killedIndexes: killedIndexes.value,
+        useSound: useSound.value
+      }      
       localStorage.setItem('gameState', JSON.stringify(stateToSave));
     }
   }
