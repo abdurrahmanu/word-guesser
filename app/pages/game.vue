@@ -236,6 +236,37 @@ const playRevealSound = () => {
       }
   };
 
+const playForfeitSound = () => {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    // 'sawtooth' gives a harsh, buzzy sound perfect for a penalty or loss
+    osc.type = 'sawtooth'; 
+
+    osc.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    const now = ctx.currentTime;
+
+    // --- Pitch Envelope (The Deflate) ---
+    // Start at a medium pitch and slide down very low over 1.5 seconds
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.exponentialRampToValueAtTime(50, now + 1.5);
+
+    // --- Volume Envelope (The Fade) ---
+    // Start at 30% volume and fade out smoothly
+    gainNode.gain.setValueAtTime(0.3, now);
+    gainNode.gain.exponentialRampToValueAtTime(0.00001, now + 1.5);
+
+    osc.start(now);
+    osc.stop(now + 1.5);
+  } catch(e) { 
+    console.error("Audio API failed", e); 
+  }
+};
 
 const openModal = (index, text) => {
   clickedIndex.value = index
@@ -296,6 +327,7 @@ const startTransferTurn = () => {
 
 const forfeitTurn = () => {
   clearInterval(timerInterval)
+  playForfeitSound()
   timeUp.value = true
   timeLeft.value = 0
   if (store.settings.allowTransfer) isTransferMode.value = true
