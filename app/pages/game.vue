@@ -76,7 +76,7 @@
 
             <div class="flex-1 flex flex-col items-center justify-center">
               <h2 
-                class="text-4xl sm:text-5xl font-black text-center text-slate-900 tracking-tight transition-all duration-300"
+                class="text-6xl sm:text-5xl font-black text-center text-slate-900 tracking-tight transition-all duration-300"
                 :class="[isWordRevealed && 'blur-none', (!isWordRevealed || timeUp) && 'blur-xl select-none']">
                 {{ activeWord.text }}
                 <div>
