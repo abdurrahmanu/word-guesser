@@ -185,6 +185,7 @@ const {initGame} = store
 const clickedIndex = ref(null)
 const showDefinition = ref(false)
 const winAudio = new Audio('/win.mp3')
+const revealAudio = new Audio('/reveal.wav')
 
 onMounted(() => {
   store.loadState()
@@ -224,50 +225,16 @@ const playWinSound = () => {
       }
     };
 
-// const playWinSound = () => {
-//     try {
-//       // Initialize Audio Context
-//       const AudioContext = window.AudioContext || window.webkitAudioContext;
-//       const ctx = new AudioContext();
-
-//       // Create an oscillator (for the sound) and a gain node (for volume control)
-//       const osc = ctx.createOscillator();
-//       const gainNode = ctx.createGain();
-
-//       // A 'triangle' or 'sine' wave sounds much happier and cleaner than a 'square' wave
-//       osc.type = 'triangle'; 
-
-//       // Connect the nodes: Oscillator -> Gain -> Destination (Speakers)
-//       osc.connect(gainNode);
-//       gainNode.connect(ctx.destination);
-
-//       const now = ctx.currentTime;
-
-//       // --- Pitch Envelope (The Melody) ---
-//       // We play a C Major arpeggio going up: C5 -> E5 -> G5 -> High C6
-//       osc.frequency.setValueAtTime(523.25, now);          // Note C5
-//       osc.frequency.setValueAtTime(659.25, now + 0.15);   // Note E5
-//       osc.frequency.setValueAtTime(783.99, now + 0.3);    // Note G5
-//       osc.frequency.setValueAtTime(1046.50, now + 0.45);  // Note C6 (holds for the rest of the time)
-
-//       // --- Volume Envelope (The Fade) ---
-//       // Start at 0 volume to prevent clicking
-//       gainNode.gain.setValueAtTime(0, now);
-//       // Quick ramp up to 50% volume
-//       gainNode.gain.linearRampToValueAtTime(0.5, now + 0.05);
-//       // Hold the volume for a bit while the melody plays
-//       gainNode.gain.setValueAtTime(0.5, now + 1.0);
-//       // Smoothly fade out the High C note down to 0 over the remaining 2 seconds
-//       gainNode.gain.exponentialRampToValueAtTime(0.00001, now + 3.0);
-
-//       // Start and stop the oscillator (exactly 3 seconds total)
-//       osc.start(now);
-//       osc.stop(now + 3.0);
-
-//     } catch(e) { 
-//       console.error("Audio API failed", e); 
-//     }
-//   };
+const playRevealSound = () => {
+      try {
+        // 2. Reset the time in case they click it again before it finishes
+        revealAudio.currentTime = 0; 
+        // 3. Play the sound
+        revealAudio.play();
+      } catch(e) { 
+        console.error("Failed to play audio", e); 
+      }
+  };
 
 
 const openModal = (index, text) => {
@@ -281,6 +248,7 @@ const openModal = (index, text) => {
 
 const revealAndStartTimer = () => {
   isWordRevealed.value = true
+  playRevealSound()
   timerInterval = setInterval(() => {
     timeLeft.value--
     if (timeLeft.value <= 0) {

@@ -1,9 +1,9 @@
 <template>
-  <main class="flex flex-col max-h-screen h-screen p-6 px-0 pt-0 bg-slate-100">
+  <main class="flex text-xs flex-col max-h-screen h-screen p-6 px-0 pt-0 bg-slate-100">
 
     <div class="flex items-center mb-3 py-4 px-5 bg-indigo-600">
       <button @click="$router.push('/')" class="ring rounded-md text-white font-bold px-2 py-1 -ml-2 hover:bg-white hover:text-indigo-600">← Back</button>
-      <h1 class="text-xl font-extrabold mx-auto uppercase text-white">Game Setup</h1>
+      <h1 class="text-base relative -left-6 font-extrabold mx-auto uppercase text-white">Game Setup</h1>
     </div>
 
     <div class="flex-1 px-4 space-y-4 max-w-md w-full mx-auto">
@@ -57,7 +57,6 @@ const router = useRouter()
 const store = useGameStore()
 const {teamOne, teamTwo, newWords, settings, addWordsError, addWordsSuccessful} = storeToRefs(store)
 const {addWords} = store
-
 
 function startGame() {
   store.initGame(settings.value)
