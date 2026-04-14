@@ -40,6 +40,7 @@ export const useGameStore = defineStore('game', () => {
     timerSeconds: 35,
     allowTransfer: true
   })
+  const useSound = ref(false)
   const newWords = ref('')
   const newWordsArray = ref<string[]>([])
   const gameWords = ref<string[]>([])
@@ -210,6 +211,7 @@ export const useGameStore = defineStore('game', () => {
         killedIndexes.value = parsedState.killedIndexes ?? killedIndexes.value
         transferredCount.value = parsedState.transferredCount ?? transferredCount.value;
         isGameOver.value = parsedState.isGameOver ?? isGameOver.value;
+        useSound.value = parsedState.useSound ?? useSound.value
         continueAfterEarlyWin.value = parsedState.continueAfterEarlyWin ?? continueAfterEarlyWin.value;
       }
     }
@@ -224,6 +226,7 @@ export const useGameStore = defineStore('game', () => {
     teamTwo,
     currentTeamTurn,
     addWordsSuccessful,
+    useSound,
     settings,
     addWordsError,
     gameWords,

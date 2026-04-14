@@ -41,7 +41,15 @@
           <span class="text-xs text-slate-400">Give the other team a chance if time runs out</span>
         </div>
         <input type="checkbox" v-model="settings.allowTransfer" class="w-6 h-6 accent-indigo-600">
-      </div>
+      </div> 
+
+      <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+        <div>
+          <label class="block font-bold text-slate-700">Use sound</label>
+          <span class="text-xs text-slate-400">Use sounds to make the game more dramatic</span>
+        </div>
+        <input type="checkbox" v-model="useSound" class="w-6 h-6 accent-indigo-600">
+      </div> 
     </div>
 
     <div class="px-4 w-[90%] mx-auto">
@@ -55,7 +63,7 @@
 <script setup>
 const router = useRouter()
 const store = useGameStore()
-const {teamOne, teamTwo, newWords, settings, addWordsError, addWordsSuccessful} = storeToRefs(store)
+const {teamOne, teamTwo, newWords, settings, addWordsError, addWordsSuccessful, useSound} = storeToRefs(store)
 const {addWords} = store
 
 function startGame() {

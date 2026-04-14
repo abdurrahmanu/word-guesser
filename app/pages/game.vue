@@ -180,7 +180,7 @@
 
 <script setup>
 const store = useGameStore()
-const {teamOne, teamTwo, settings, indexWinner} = storeToRefs(store)
+const {teamOne, teamTwo, settings, indexWinner, useSound} = storeToRefs(store)
 const {initGame} = store
 const clickedIndex = ref(null)
 const showDefinition = ref(false)
@@ -201,6 +201,7 @@ let timerInterval = null
 
 // Audio Alarm via Web API
 const playAlarm = () => {
+  if (!useSound.value) return
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)()
     const osc = ctx.createOscillator()
@@ -214,6 +215,7 @@ const playAlarm = () => {
 }
 
 const playWinSound = () => {
+    if (!useSound.value) return
       try {
         // 2. Reset the time in case they click it again before it finishes
         winAudio.currentTime = 0; 
@@ -226,6 +228,7 @@ const playWinSound = () => {
     };
 
 const playRevealSound = () => {
+    if (!useSound.value) return
       try {
         // 2. Reset the time in case they click it again before it finishes
         revealAudio.currentTime = 0; 
@@ -237,6 +240,7 @@ const playRevealSound = () => {
   };
 
 const playForfeitSound = () => {
+    if (!useSound.value) return
   try {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioContext();
@@ -269,6 +273,7 @@ const playForfeitSound = () => {
 };
 
 const playTransferTurnSound = () => {
+    if (!useSound.value) return
   try {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioContext();
@@ -283,13 +288,9 @@ const playTransferTurnSound = () => {
 
     const now = ctx.currentTime;
 
-    // --- Pitch Envelope (The Bloop) ---
-    // Start on one note, then quickly jump up a bit higher
     osc.frequency.setValueAtTime(440, now);           // Note A4
     osc.frequency.setValueAtTime(587.33, now + 0.05); // Note D5 (jumps up after 50ms)
 
-    // --- Volume Envelope (The Snappy Fade) ---
-    // Total duration is extremely short (0.15 seconds)
     gainNode.gain.setValueAtTime(0, now);
     gainNode.gain.linearRampToValueAtTime(0.5, now + 0.02); // Quick ramp up to avoid clicks
     gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.15); // Fast fade out
@@ -301,9 +302,84 @@ const playTransferTurnSound = () => {
   }
 };
 
-// Example: document.getElementById('transferBtn').addEventListener('click', playTransferTurnSound);
+const playKillTurnSound = () => {
+  if (!useSound.value) return
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    // A 'square' wave provides a harsh, buzzy tone that feels like an "error" or "stop"
+    osc.type = 'square'; 
+
+    osc.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    const now = ctx.currentTime;
+
+    // --- Pitch Envelope (The Zap/Thud) ---
+    // Start at a low pitch and drop aggressively down to almost nothing
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.exponentialRampToValueAtTime(10, now + 0.2); 
+
+    // --- Volume Envelope (The Abrupt Cut) ---
+    // Total duration is a very short and snappy 0.2 seconds
+    gainNode.gain.setValueAtTime(0.4, now); // Start at a moderate volume
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.2); // Crash out fast
+
+    osc.start(now);
+    osc.stop(now + 0.2);
+  } catch(e) { 
+    console.error("Audio API failed", e); 
+  }
+};
+
+const vibrateOnIndexPress = () => {
+  if (!useSound.value) return
+      if ("vibrate" in navigator) {
+        
+        navigator.vibrate([50, 100, 50]); 
+        console.log('wow');
+        
+      } else {
+        try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    // 'sawtooth' provides a harsh, rich texture—perfect for buzzing and zapping
+    osc.type = 'sawtooth'; 
+
+    osc.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    const now = ctx.currentTime;
+
+    // --- Pitch Envelope (The "Zooo" slide) ---
+    // Start very low (60Hz gives a physical vibration feel) and slide up rapidly
+    osc.frequency.setValueAtTime(60, now); 
+    osc.frequency.exponentialRampToValueAtTime(250, now + 0.3); 
+
+    // --- Volume Envelope (The snappy "t" ending) ---
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.5, now + 0.02); // Instant buzz on
+    gainNode.gain.setValueAtTime(0.5, now + 0.25);          // Hold the buzz
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.3); // Sharp cutoff for the "t"
+
+    osc.start(now);
+    osc.stop(now + 0.3); // Total duration is a snappy 0.3 seconds
+  } catch(e) { 
+    console.error("Audio API failed", e); 
+  }
+        console.log("Vibration not supported on this device.");
+      }
+  };
+
 
 const openModal = (index, text) => {
+  vibrateOnIndexPress()
   clickedIndex.value = index
   activeWord.value = { index, text }
   isWordRevealed.value = false
@@ -348,6 +424,7 @@ const markAnswered = () => {
 
 const killWordAndTurn = () => {
   clearInterval(timerInterval)
+  playKillTurnSound()
   store.markWordUsed(activeWord.value.index, true)
   closeModalAndSwitchTurn()
 }
