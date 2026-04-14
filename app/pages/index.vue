@@ -9,11 +9,18 @@
       </div>
       <p class="text-red-300 rounded-md my-3 ring ring-red-400 mb-5 py-1 max-w-110">You cannot use the actual word in the explanation. eg. when the word is national you should not use international in your explanation. Turn gets skipped with such mistake!</p>
     
-    <div class="bg-slate-800 p-5 rounded-2xl mt-3 w-full max-w-120 shadow-xl mb-8 border border-slate-700">
-      <h2 class="font-bold text-lg mb-2">ROLES</h2>
-      <ul class="text-sm text-slate-300 space-y-2 mb-4">
-        <li><strong class="text-indigo-400">REVEALER</strong> Picks an index. Says the word.</li>
-        <li><strong class="text-indigo-400">EXPLAINER</strong> Opens the word and then explains it to the Chooser.</li>
+    <div class="bg-slate-800 p-5 rounded-2xl mt-3 w-full max-w-120 shadow-xl mb-8 border border-slate-700 ">
+      <h2 class="font-bold text-lg mb-5">PLAYER ROLES</h2>
+
+      <ul class="text-sm text-slate-300 space-y-5 mb-4">
+        <div>
+          <p class="text-indigo-400 font-bold">REVEALER</p> 
+          <p>Picks an index. Says the word.</p>
+        </div>
+        <div>
+          <p class="text-indigo-400 font-bold">EXPLAINER</p> 
+          <p>Opens the word and then explains it to the Chooser.</p>
+        </div>
       </ul>
     </div>
   </div>

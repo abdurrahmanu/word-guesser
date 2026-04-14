@@ -1,26 +1,27 @@
 <template>
   <main class="min-h-screen bg-slate-900 flex flex-col font-sans select-none">
-    <header class="bg-slate-800 p-4 shadow-md rounded-b-3xl z-10 relative">
+    <header class="bg-slate-800 p-4 pb-1 shadow-md z-10 relative">
       <div class="flex justify-between items-center mb-4">
-        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="[store.currentTeamTurn === 1 ? 'bg-blue-600 text-white shadow-lg ring-2 ring-blue-300' : 'bg-slate-700 text-slate-400']">
+        <div class="flex flex-col items-center rounded-xl min-w-20" :class="[store.currentTeamTurn === 1 ? 'text-blue-500' : 'text-slate-400']">
           <span class="font-bold uppercase tracking-wider">{{ teamOne }}</span>
-          <span class="text-3xl font-black">{{ store.team1Score }}</span>
+          <div class="w-full text-center text-5xl font-black rounded-b-xl">{{ store.team1Score }}</div>
         </div>
         
         <button @click="$router.push('/')" class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-slate-300 hover:bg-red-500 hover:text-white transition-colors">
           ✕
         </button>
 
-        <div class="flex flex-col items-center p-3 rounded-xl min-w-20" :class="store.currentTeamTurn === 2 ? 'bg-red-600 text-white shadow-lg ring-2 ring-red-300' : 'bg-slate-700 text-slate-400'">
+       <div class="flex flex-col items-center rounded-xl min-w-20" :class="[store.currentTeamTurn === 2 ? 'text-blue-500' : 'text-slate-400']">
           <span class="font-bold uppercase tracking-wider">{{ teamTwo }}</span>
-          <span class="text-3xl font-black">{{ store.team2Score }}</span>
+          <div class="w-full text-center text-5xl font-black rounded-b-xl"">{{ store.team2Score }}</div>
         </div>
       </div>
 
-      <div class="flex justify-center gap-4 text-sm text-slate-300 font-medium">
-        <div class="bg-slate-900 px-3 py-1 rounded-full">Total: {{ store.settings.wordCount }}</div>
-        <div class="bg-slate-900 px-3 py-1 rounded-full">Used: {{ store.usedIndexes.length }}</div>
-        <div v-if="store.settings.allowTransfer" class="bg-slate-900 px-3 py-1 rounded-full">Transferred: {{ store.transferredCount }}</div>
+      <div class="flex justify-center py-1 gap-4 text-sm text-slate-300 font-medium">
+        <div class="bg-slate-900 px-5 py-1 rounded-md">Total: {{ store.settings.wordCount }}</div>
+        <div class="bg-slate-900 px-5 py-1 rounded-md">Answered: {{ store.usedIndexes.length }}</div>
+        <div class="bg-slate-900 px-5 py-1 rounded-md">Killed: {{ store.killedIndexes.length }}</div>
+        <!-- <div v-if="store.settings.allowTransfer" class="bg-slate-900 px-5 py-1 rounded-md">Transferred: {{ store.transferredCount }}</div> -->
       </div>
     </header>
 
@@ -33,12 +34,11 @@
           v-for="(word, index) in store.gameWords" 
           :key="index"
           @click="openModal(index, word)"
-          :disabled="store.usedIndexes.includes(index)"
+          :disabled="store.usedIndexes.includes(index) || store.killedIndexes.includes(index)"
           class="aspect-square rounded-2xl flex items-center justify-center text-5xl font-black transition-all shadow-sm"
-          :class="store.usedIndexes.includes(index) 
-            ? 'bg-slate-800 text-slate-600 opacity-50 cursor-not-allowed' 
-            : 'ring-2 ring-cyan-500/50 bg-animated-gradient shadow-[0_0_20px_rgba(6,182,212,0.4)] text-white hover:bg-cyan-800 active:scale-95 shadow-indigo-500/30'"
-        >
+          :class="[store.usedIndexes.includes(index) 
+            ? 'bg-slate-800 text-slate-600 ring-2 ring-cyan-900 opacity-50 cursor-not-allowed' 
+            : store.killedIndexes.includes(index) ? 'cursor-not-allowed ring-2 ring-red-900/40 text-red-400/40' : 'ring-2 ring-cyan-500/50 bg-animated-gradient shadow-[0_0_20px_rgba(6,182,212,0.4)] text-white hover:bg-cyan-800 active:scale-95 shadow-indigo-500/30']">
           {{ index + 1 }}
         </button>
       </div>
@@ -47,78 +47,86 @@
     <Teleport to="body">
       <div v-if="activeWord" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click.stop></div>
-        
-        
-        <div class="relative w-full max-w-sm h-[85%] bg-white rounded-3xl shadow-2xl flex flex-col p-6 pt-4 overflow-hidden">
-          <div class="mx-auto w-fit">
-            <button v-if="!isWordRevealed" @click="closeModalWithoutSwitchingTurn" class="font-mono text-3xl font-bold text-red-700 h-10 w-10 text-center ring ring-red-600 hover:text-white hover:bg-red-800 rounded-full">X</button>
-          </div>
-          
-          <div class="text-center space-y-1">
-              <span class="text-6xl font-black tabular-nums" :class="timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-slate-800'">
-              {{ timeLeft }}s
-            </span>
-          </div>
-
-
-          <div class="flex-1 flex flex-col items-center justify-center">
-            <h2 
-              class="text-4xl sm:text-5xl font-black text-center text-slate-900 tracking-tight transition-all duration-300"
-              :class="isWordRevealed ? 'blur-none' : 'blur-xl select-none'"
-            >
-              {{ activeWord.text }}
-            </h2>
-            <p v-if="!isWordRevealed" class="text-slate-400 text-sm mt-4 font-bold text-center">Explainer, click below when ready</p>
-          </div>
-
-          <div class="mt-auto space-y-4">
-            <button 
-              v-if="!isWordRevealed && !timeUp" 
-              @click="revealAndStartTimer"
-              class="w-full bg-indigo-600 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform"
-            >
-              SHOW WORD
-            </button>
-
-            <div class="space-y-3" v-if="isWordRevealed && !timeUp">
-
-              <button 
-              @click="markAnswered"
-              class="w-full bg-emerald-500 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-emerald-500/40"
-              >
-              ANSWERED!
-            </button>
-
-              <button 
-              @click="startTransferTurn"
-              class="w-full bg-red-500 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-emerald-500/40">
-              FORFEIT TURN
-            </button>
-            
-            </div>
-            
-
-            <template v-if="timeUp">
-              <div class="text-center text-red-500 font-bold mb-4 uppercase tracking-widest animate-bounce">Time's Up!</div>
               
-              <button 
-                v-if="isTransferMode" 
-                @click="startTransferTurn"
-                class="w-full bg-orange-500 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-orange-500/40"
+        <div class="relative w-full max-w-sm h-full space-y-5">
+          <div class="mx-auto w-fit">
+            <button v-if="!isWordRevealed" @click="closeModalWithoutSwitchingTurn" class="font-mono text-lg font-black text-red-700 px-10 py-2 text-center ring ring-red-600 hover:text-white hover:bg-red-800 rounded-full">CHANGE SELECTION</button>
+          </div>
+
+          <div class="relative w-full max-w-sm h-[90%] bg-white rounded-3xl shadow-2xl flex flex-col p-6 overflow-hidden">
+            <div class="text-center space-y-1">
+                <span class="text-6xl font-black tabular-nums" :class="timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-slate-800'">
+                {{ timeLeft }}s
+              </span>
+            </div>
+
+            <p v-if="true" class="text-center py-10 text-xl font-black uppercase">{{ store.currentTeamTurn === 1 ? 'Team One' : 'Team Two'}}</p>
+
+            <p class="text-center w-fit top-10 relative mx-auto text-sm font-bold bg-amber-500 rounded-full px-10 py-1 -rotate-10 animate-pulse">BONUS</p>
+
+            <div class="flex-1 flex flex-col items-center justify-center">
+              <h2 
+                class="text-4xl sm:text-5xl font-black text-center text-slate-900 tracking-tight transition-all duration-300"
+                :class="isWordRevealed ? 'blur-none' : 'blur-xl select-none'"
               >
-                TRANSFER TURN TO TEAM {{ store.currentTeamTurn === 1 ? 2 : 1 }}
+                {{ activeWord.text }}
+              </h2>
+              <p v-if="!isWordRevealed" class="text-slate-400 text-sm mt-4 font-bold text-center">Explainer, click below when ready</p>
+            </div>
+
+            <div class="mt-auto space-y-4">
+              <button 
+                v-if="!isWordRevealed && !timeUp" 
+                @click="revealAndStartTimer"
+                class="w-full bg-indigo-600 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform"
+              >
+                SHOW WORD
               </button>
 
-              <button 
-                v-else
-                @click="closeModalAndSwitchTurn"
-                class="w-full bg-slate-800 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform"
-              >
-                BACK TO BOARD
+              <div class="space-y-3" v-if="isWordRevealed && !timeUp">
+
+                <button 
+                @click="markAnswered"
+                class="w-full bg-emerald-500 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-emerald-500/40"
+                >
+                ANSWERED!
               </button>
-            </template>
+
+                <button 
+                @click="forfeitTurn"
+                class="w-full bg-red-500 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-emerald-500/40">
+                FORFEIT TURN
+              </button>
+              </div>
+              
+              <template v-if="timeUp">
+                <div class="text-center text-red-500 font-bold mb-4 uppercase tracking-widest animate-bounce">Time's Up!</div>
+                <button 
+                  v-if="isTransferMode" 
+                  @click="startTransferTurn"
+                  class="w-full bg-orange-500 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-orange-500/40">
+                  TRANSFER TURN TO TEAM {{ store.currentTeamTurn === 1 ? 2 : 1 }}
+                </button>
+
+                <button 
+                  v-if="isTransferMode" 
+                  @click="killWordAndTurn"
+                  class="w-full bg-red-500 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-orange-500/40">
+                  KILL TURN & WORD
+                </button>
+
+                <button 
+                  v-else
+                  @click="closeModalAndSwitchTurn"
+                  class="w-full bg-slate-800 text-white font-bold text-xl py-6 rounded-2xl active:scale-95 transition-transform"
+                >
+                  BACK TO BOARD
+                </button>
+              </template>
+            </div>
           </div>
         </div>
+
       </div>
     </Teleport>
 
@@ -228,11 +236,25 @@ const markAnswered = () => {
   closeModalAndSwitchTurn()
 }
 
+const killWordAndTurn = () => {
+  clearInterval(timerInterval)
+  store.markWordUsed(activeWord.value.index, true)
+  closeModalAndSwitchTurn()
+}
+
 const startTransferTurn = () => {
   isTransferMode.value = true
   timeUp.value = false
   timeLeft.value = store.settings.timerSeconds / 2 // Optionally give them half time, or full time
   revealAndStartTimer()
+  store.switchTurn()
+}
+
+const forfeitTurn = () => {
+  clearInterval(timerInterval)
+  timeUp.value = true
+  timeLeft.value = 0
+  if (store.settings.allowTransfer) isTransferMode.value = true
 }
 
 const closeModalAndSwitchTurn = () => {
