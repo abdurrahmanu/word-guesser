@@ -1,6 +1,7 @@
 <template>
   <main class="flex flex-col max-h-screen h-screen p-6 px-0 pt-0 bg-slate-100">
-    <div class="flex items-center mb-8 py-4 px-5 bg-indigo-600">
+
+    <div class="flex items-center mb-3 py-4 px-5 bg-indigo-600">
       <button @click="$router.push('/')" class="ring rounded-md text-white font-bold px-2 py-1 -ml-2 hover:bg-white hover:text-indigo-600">← Back</button>
       <h1 class="text-xl font-extrabold mx-auto uppercase text-white">Game Setup</h1>
     </div>
@@ -43,10 +44,12 @@
       </div>
     </div>
 
-    <button @click="startGame" class="mt-8 w-full max-w-md mx-auto bg-indigo-600 text-white font-bold py-4 hover:ring-2 hover:ring-indig rounded-xl shadow-lg active:scale-95 hover:bg-white transition-colors duration-100 hover:text-indigo-600">
-      Start Game
-    </button>
-  </main>
+    <div class="px-4 w-[90%] mx-auto">
+      <button @click="startGame" class="mt-8 w-full max-w-md mx-auto bg-indigo-600 text-white font-bold py-4 hover:ring-2 hover:ring-indig rounded-xl shadow-lg active:scale-95 hover:bg-white transition-colors duration-100 hover:text-indigo-600">
+        Start Game
+      </button>
+    </div>
+    </main>
 </template>
 
 <script setup>
