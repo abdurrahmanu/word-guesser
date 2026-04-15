@@ -81,8 +81,8 @@
                 {{ activeWord.text }}
                 <div>
 
-                  <!-- <button @click="showDefinition" class="px-5 py-1 text-base font-semibold rounded-md text-white bg-green-500">{{ !showDefinition ? 'Definition' : 'Close' }}</button> -->
-                  <!-- <p v-if="showDefinition">{{ wordDefinition }} Lorem ipsum dolor sit amet consectetur, adipisicing elit. Assumenda, impedit.</p> -->
+                  <button @click="showDefinition = !showDefinition" class="px-5 py-1 text-base font-semibold rounded-md text-white bg-green-500">{{ !showDefinition ? 'Definition' : 'Close' }}</button>
+                  <p class="text-base font-semibold py-2 font-sans" v-if="showDefinition">{{ allDefinitions[activeWord.text] }}</p>
                 </div>
               </h2>
 
@@ -180,7 +180,7 @@
 
 <script setup>
 const store = useGameStore()
-const {teamOne, teamTwo, settings, indexWinner, useSound} = storeToRefs(store)
+const {teamOne, teamTwo, settings, indexWinner, useSound, allDefinitions} = storeToRefs(store)
 const {initGame} = store
 const clickedIndex = ref(null)
 const showDefinition = ref(false)
@@ -226,7 +226,7 @@ const playWinSound = () => {
       } catch(e) { 
         console.error("Failed to play audio", e); 
       }
-    };
+};
 
 const playRevealSound = () => {
     if (!useSound.value) return
@@ -238,7 +238,7 @@ const playRevealSound = () => {
       } catch(e) { 
         console.error("Failed to play audio", e); 
       }
-  };
+};
 
 const playForfeitSound = () => {
     if (!useSound.value) return
@@ -369,8 +369,7 @@ const vibrateOnIndexPress = () => {
   } catch(e) { 
     console.error("Audio API failed", e); 
   }
-  };
-
+};
 
 const openModal = (index, text) => {
   vibrateOnIndexPress()
