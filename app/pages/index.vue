@@ -39,13 +39,13 @@
 </template>
 
 <script setup lang="ts"> 
-type Choices = 'game' | 'dictionary' | 'random_words'
+type Choices = 'game' | 'dictionary' | 'random_words' | 'scrambled_words'
 
 const currentPage = ref<Choices>('game')
-const pages: Choices[] = ['game', 'dictionary', 'random_words']
+const pages: Choices[] = ['game', 'dictionary', 'random_words', 'scrambled_words']
 
 const buttonColor = computed(() => {
-  return currentPage.value === 'game' ? 'bg-indigo-600 hover:bg-indigo-500' : currentPage.value === 'dictionary' ? 'bg-sky-700 hover:bg-sky-900' : 'bg-teal-700 hover:bg-teal-900'
+  return currentPage.value === 'game' ? 'bg-indigo-600 hover:bg-indigo-500' : currentPage.value === 'dictionary' ? 'bg-sky-700 hover:bg-sky-900' : currentPage.value === 'scrambled_words' ? 'bg-green-700 hover:bg-green-900' : 'bg-teal-700 hover:bg-teal-900'
 })
 
 const next = () => {  
