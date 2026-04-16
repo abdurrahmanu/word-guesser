@@ -18,15 +18,15 @@
           <input type="number" v-model="settings.timerSeconds" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500" min="10" max="120">
         </div>
 
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-          <div>
+        <div class="bg-white p-4 pt-3 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+          <label class="flex items-center font-bold text-slate-700 mb-2">First to Reach <span class="w-6 h-6 text-center text-green-600 font-bold flex justify-center items-center ring mx-1 rounded-md">{{ firstToReach }}</span> wins</label>
+          <div class="flex items-center gap-3">
             <div class="flex items-center gap-1">
               <input type="checkbox" v-model="toggleFirstToReach" class="w-5 h-5 accent-indigo-600">
-              <label class="block font-bold text-slate-700">Toggle first to Reach</label>
+              <label class="block font-bold text-slate-700 whitespace-nowrap">Toggle first to Reach</label>
             </div>
+            <input type="number" :disabled="!toggleFirstToReach" v-model="firstToReach" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500" min="10" max="120">
           </div>
-          <label class="flex items-center font-bold text-slate-700 mb-2">First to Reach <span class="w-6 h-6 text-center text-green-600 font-bold flex justify-center items-center ring mx-1 rounded-md">{{ firstToReach }}</span> wins</label>
-          <input type="number" v-model="firstToReach" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-indigo-500" min="10" max="120">
         </div>
 
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
@@ -62,6 +62,14 @@
           </div>
           <input type="checkbox" v-model="useSound" class="w-5 h-5 accent-indigo-600">
         </div> 
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+          <div>
+            <label class="block font-bold text-slate-700">Show Definitions</label>
+            <span class="text-xs text-slate-400">You can use Definition at half time</span>
+          </div>
+          <input type="checkbox" v-model="useDefinition" class="w-5 h-5 accent-indigo-600">
+        </div> 
       
           <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2 transition-colors duration-100 border border-slate-200">
             <label class="block font-bold text-slate-700 relative -top-1">Select Difficulty</label>
@@ -75,7 +83,7 @@
       </div>
     </div>
 
-    <div class="px-4 w-[90%] mx-auto py-2">
+    <div class="px-4 w-[90%] mx-auto py-2 text-center">
       <button @click="startGame" class="w-full max-w-md mx-auto bg-indigo-600 text-white font-bold py-4 hover:ring-2 hover:ring-indig rounded-xl shadow-lg active:scale-95 hover:bg-white transition-colors duration-100 hover:text-indigo-600">
         Start Game
       </button>
@@ -86,7 +94,7 @@
 <script setup>
 const router = useRouter()
 const store = useGameStore()
-const {teamOne, teamTwo, newWords, toggleFirstToReach, firstToReach, difficulty, settings, addWordsError, addWordsSuccessful, useSound} = storeToRefs(store)
+const {teamOne, teamTwo, newWords, useDefinition, toggleFirstToReach, firstToReach, difficulty, settings, addWordsError, addWordsSuccessful, useSound} = storeToRefs(store)
 const {addWords} = store
 
 function startGame() {

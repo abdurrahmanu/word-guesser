@@ -7,12 +7,7 @@
         <h1 class="text-2xl font-bold">How to play</h1>
         <p class="text-justify text-sm">Four players will split into two teams. For team A, one player clicks an index that holds a hidden word. The second player must then describe that word to the first player. The first player should correctly guess the word with the explanation before the timer runs out! The team has the option of forfeiting their turn. There is a transfer of turn after timeout.</p>
       </div>
-      <div class="text-left text-sm my-3 mb-5 max-w-110 text-red-300 p-3 ring-red-400 ring rounded-md space-y-2">
-        <p class="h-7 w-7 mx-auto flex justify-center items-center rounded-full text-xl font-black font-mono ring-2 ring-red-900 text-center">!</p>
-        <p>The <span class="font-bold text-green-600">EXPLAINER</span> cannot use the actual word in the explanation. eg. when the word is national you should not use international in your explanation. Your turn gets skipped with such mistake!</p>
-        <p>The <span class="font-bold text-green-600">REVEALER</span> does not look directly at the revealer while he is listening to the explanation</p>
-        <!-- <p>2. On forfeit the other team gets to play twice in a row</p> -->
-      </div>
+
     <div class="bg-slate-800 p-5 rounded-2xl mt-1 w-full max-w-120 shadow-xl mb-8 border border-slate-700 ">
       <h2 class="font-bold text-lg mb-5">PLAYER ROLES</h2>
 
@@ -30,10 +25,45 @@
   </div>
 
   <div class="flex-1 flex flex-col justify-end items-center">
-    <button @click="$router.push('/setup')" class="w-full max-w-110 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95">
-      Next
-    </button>
+    <div class="flex max-w-screen w-full px-2 gap-3 justify-center">
+      <button @click="prev" :class="[currentPage === pages[0] ? 'ring-white/20 text-white/20' : 'ring-white hover:bg-white hover:text-indigo-600']" class="w-fit ring rounded-md text-white text-4xl font-bold px-4 py-1 -ml-2 ">←</button>
+
+      <button @click="goTo" :class="[buttonColor]" class="inline-block flex-1 max-w-110 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 uppercase">
+        {{currentPage}}
+      </button>
+
+      <button @click="next" :class="[currentPage === pages[pages.length - 1] ? 'ring-white/20 text-white/20' : 'ring-white hover:bg-white hover:text-indigo-600']" class="w-fit ring rounded-md text-white font-bold px-4 pb-4 relative py-1 rotate-180 text-4xl">←</button>
+    </div>
   </div>
 </main>
-
 </template>
+
+<script setup lang="ts"> 
+type Choices = 'game' | 'dictionary' | 'random_words'
+
+const currentPage = ref<Choices>('game')
+const pages: Choices[] = ['game', 'dictionary', 'random_words']
+
+const buttonColor = computed(() => {
+  return currentPage.value === 'game' ? 'bg-indigo-600 hover:bg-indigo-500' : currentPage.value === 'dictionary' ? 'bg-sky-700 hover:bg-sky-900' : 'bg-teal-700 hover:bg-teal-900'
+})
+
+const next = () => {  
+  let index = pages.indexOf(currentPage.value)  
+  if (index === -1 || index === pages.length - 1) return    
+  currentPage.value = pages[index + 1] as Choices
+  console.log(currentPage.value);
+  
+}
+
+const prev = () => {
+  let index = pages.indexOf(currentPage.value)
+  if (index === -1 || index === 0) return
+  currentPage.value = pages[index - 1] as Choices
+}
+
+const goTo = () => {
+  let route = currentPage.value === 'game' ? '/setup' : '/' + currentPage.value
+  navigateTo(route, {replace: true})
+}
+</script>

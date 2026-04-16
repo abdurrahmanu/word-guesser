@@ -1,7 +1,7 @@
 // stores/game.ts
 import { defineStore } from 'pinia'
 
-const allDefinitions = {
+export const allDefinitions = {
   "action": "The fact or process of doing something, typically to achieve an aim.",
   "advice": "Guidance or recommendations offered with regard to prudent future action.",
   "afraid": "Feeling fear or anxiety; frightened.",
@@ -15,7 +15,6 @@ const allDefinitions = {
   "attack": "Take aggressive action against in a battle or war.",
   "author": "A writer of a book, article, or report.",
   "aware": "Having knowledge or perception of a situation or fact.",
-  
   "balance": "An even distribution of weight enabling someone or something to remain upright and steady.",
   "banana": "A long curved fruit which grows in clusters and has soft pulpy flesh and yellow skin.",
   "battle": "A sustained fight between large organized armed forces.",
@@ -29,7 +28,6 @@ const allDefinitions = {
   "brave": "Ready to face and endure danger or pain; showing courage.",
   "bridge": "A structure carrying a road, path, railroad, or canal across a river, ravine, or other obstacle.",
   "butter": "A pale yellow edible fatty substance made by churning cream.",
-  
   "camera": "A device for recording visual images in the form of photographs, film, or video signals.",
   "cancel": "Decide or announce that an arranged or planned event will not take place.",
   "candle": "A cylinder or block of wax or tallow with a central wick that is lit to produce light.",
@@ -43,7 +41,6 @@ const allDefinitions = {
   "clever": "Quick to understand, learn, and devise or apply ideas; intelligent.",
   "coffee": "A hot drink made from the roasted and ground seeds (coffee beans) of a tropical shrub.",
   "common": "Occurring, found, or done often; prevalent.",
-  
   "danger": "The possibility of suffering harm or injury.",
   "decide": "Come to a resolution in the mind as a result of consideration.",
   "defend": "Resist an attack made on someone or something; protect from harm or danger.",
@@ -1296,6 +1293,7 @@ export const useGameStore = defineStore('game', () => {
     timerSeconds: 35,
     allowTransfer: true
   })
+  const useDefinition = ref(false)
   const firstToReach = ref<null | number>(null)
   const toggleFirstToReach = ref(false)
   const useSound = ref(false)
@@ -1460,7 +1458,8 @@ export const useGameStore = defineStore('game', () => {
         useSound: useSound.value,
         difficulty: difficulty.value,
         toggleFirstToReach: toggleFirstToReach.value,
-        firstToReach: firstToReach.value
+        firstToReach: firstToReach.value,
+        useDefinition: useDefinition.value
       }      
       localStorage.setItem('gameState', JSON.stringify(stateToSave));
     }
@@ -1485,6 +1484,7 @@ export const useGameStore = defineStore('game', () => {
         toggleFirstToReach.value = parsedState.toggleFirstToReach ?? toggleFirstToReach.value
         firstToReach.value = parsedState.firstToReach ?? firstToReach.value
         difficulty.value = parsedState.difficulty ?? difficulty.value
+        useDefinition.value = parsedState.showDefinition ?? useDefinition.value
         continueAfterEarlyWin.value = parsedState.continueAfterEarlyWin ?? continueAfterEarlyWin.value;
       }
     }
@@ -1493,6 +1493,7 @@ export const useGameStore = defineStore('game', () => {
   return {
     // State
     newWords,
+    useDefinition,
     team1Score,
     team2Score,
     teamOne,

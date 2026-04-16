@@ -4,7 +4,7 @@
       <div class="flex justify-between mb-4">
         <div class="flex flex-col items-center rounded-xl min-w-20" :class="[store.currentTeamTurn === 1 ? 'text-blue-500' : 'text-slate-400']">
           <span class="font-bold uppercase tracking-wider">{{ teamOne }}</span>
-          <div class="w-full text-center text-5xl font-black rounded-b-xl">{{ store.team1Score }}</div>
+          <div class="w-full text-center text-7xl font-black rounded-b-xl">{{ store.team1Score }}</div>
         </div>
         
         <div class="flex gap-4">
@@ -18,7 +18,7 @@
 
        <div class="flex flex-col items-center rounded-xl min-w-20" :class="[store.currentTeamTurn === 2 ? 'text-blue-500' : 'text-slate-400']">
           <span class="font-bold uppercase tracking-wider">{{ teamTwo }}</span>
-          <div class="w-full text-center text-5xl font-black rounded-b-xl"">{{ store.team2Score }}</div>
+          <div class="w-full text-center text-7xl font-black rounded-b-xl"">{{ store.team2Score }}</div>
         </div>
       </div>
 
@@ -45,7 +45,7 @@
           :class="[store.usedIndexes.includes(index) 
             ? 'bg-slate-800 text-slate-200 ring-2 ring-cyan-900 opacity-50 cursor-not-allowed' 
             : store.killedIndexes.includes(index) ? 'cursor-not-allowed ring-2 ring-red-900/40 text-red-400/70' : 'ring-2 ring-cyan-500/50 bg-animated-gradient shadow-[0_0_20px_rgba(6,182,212,0.4)] text-white hover:bg-cyan-800 active:scale-95 shadow-indigo-500/30']">
-          <span v-if="!store.usedIndexes.includes(index) && !store.killedIndexes.includes(index)">{{ index + 1 }} </span>
+          <span v-if="!store.usedIndexes.includes(index) && !store.killedIndexes.includes(index)">?</span>
           <div v-if="store.usedIndexes.includes(index) || store.killedIndexes.includes(index)" class="text-[18px] -rotate-45">
             <p v-if="store.usedIndexes.includes(index)" class="text-green-400 text-xl">{{ store.indexWinner[index] === 1 ? '1' : '2' }}</p>
             <p>{{ word }}</p>
@@ -79,8 +79,7 @@
                 class="text-6xl sm:text-5xl font-black text-center text-slate-900 tracking-tight transition-all duration-300"
                 :class="[isWordRevealed && 'blur-none', (!isWordRevealed || timeUp) && 'blur-xl select-none']">
                 {{ activeWord.text }}
-                <div>
-
+                <div v-if="!isTransferMode && (useDefinition && timeLeft <= Math.round(settings.timerSeconds) / 2) ">
                   <button @click="showDefinition = !showDefinition" class="px-5 py-1 text-base font-semibold rounded-md text-white bg-green-500">{{ !showDefinition ? 'Definition' : 'Close' }}</button>
                   <p class="text-base font-semibold py-2 font-sans" v-if="showDefinition">{{ allDefinitions[activeWord.text] }}</p>
                 </div>
@@ -180,7 +179,7 @@
 
 <script setup>
 const store = useGameStore()
-const {teamOne, teamTwo, settings, indexWinner, useSound, allDefinitions} = storeToRefs(store)
+const {teamOne, teamTwo, settings, useDefinition, indexWinner, useSound, allDefinitions} = storeToRefs(store)
 const {initGame} = store
 const clickedIndex = ref(null)
 const showDefinition = ref(false)
