@@ -1279,9 +1279,12 @@ const medium : string[] = [
   "millipede","scorpion","mongoose","jackal","baboon","pangolin","chameleon","stork","gazelle", "matter", "mature"
 ];
 
+export type Choices = 'word_guesser' | 'dictionary' | 'random_words' | 'scrambled_words' | 'boxed' | 'tictactoe' | 'geography' | 'quiz'
+
 const all : string[] =  [...new Set([...easy, ...hard, ...medium, ...ALL_WORDS])]
 
 export const useGameStore = defineStore('game', () => {
+  const currentPage = ref<Choices>('word_guesser')
   const team1Score = ref(0)
   const team2Score = ref(0)
   const teamOne = ref('Team One')
@@ -1498,6 +1501,7 @@ export const useGameStore = defineStore('game', () => {
     team2Score,
     teamOne,
     teamTwo,
+    currentPage,
     currentTeamTurn,
     addWordsSuccessful,
     allDefinitions,
