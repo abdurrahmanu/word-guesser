@@ -1,54 +1,85 @@
 <template>
   <main class="min-h-screen bg-slate-900 flex flex-col font-sans select-none">
-    <header class="bg-slate-800 p-4 pb-1 shadow-md z-10 relative">
-      <div class="flex justify-between mb-4">
-        <div class="flex flex-col items-center rounded-xl min-w-20" :class="[store.currentTeamTurn === 1 ? 'text-blue-500' : 'text-slate-400']">
-          <span class="font-bold uppercase tracking-wider">{{ teamOne }}</span>
-          <div class="w-full text-center text-7xl font-black rounded-b-xl">{{ store.team1Score }}</div>
-        </div>
-        
-        <div class="flex gap-4">
-          <button @click="$router.push('/word_guesser')" class="px-4 py-1  rounded-md bg-slate-700 h-fit text-slate-300 hover:bg-red-500 hover:text-white transition-colors">
-            BACK
-          </button>
-          <button @click="restart" class="px-4 py-1  rounded-md bg-slate-700 h-fit text-slate-300 hover:bg-red-500 hover:text-white transition-colors">
-            RESTART
-          </button>
-        </div>
+  <header class="bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 shadow-xl z-20 relative shrink-0 flex flex-col">
+    
+    <div class="flex justify-between items-center px-4 sm:px-6 py-3 border-b border-slate-800/50">
+      <button @click="$router.push('/word_guesser')" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider uppercase transition-colors border border-slate-700/50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Leave
+      </button>
 
-       <div class="flex flex-col items-center rounded-xl min-w-20" :class="[store.currentTeamTurn === 2 ? 'text-blue-500' : 'text-slate-400']">
-          <span class="font-bold uppercase tracking-wider">{{ teamTwo }}</span>
-          <div class="w-full text-center text-7xl font-black rounded-b-xl"">{{ store.team2Score }}</div>
+      <span :class="[(usedIndexes.length || killedIndexes.length) ? 'text-green-500' : 'text-slate-500 blur-sm']" class="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em]">in Progress</span>
+
+      <button @click="restart" class="flex items-center gap-2 text-slate-400 hover:text-rose-400 bg-slate-800/50 hover:bg-rose-500/10 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider uppercase transition-colors border border-slate-700/50 hover:border-rose-500/30">
+        Restart
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="flex justify-center items-center gap-2 shrink-0 px-2 sm:px-6">
+        <div class="flex gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
+          <div class="flex items-center justify-between gap-3 bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/50">
+            <span class="text-slate-500">Total</span>
+            <span class="text-slate-200">{{ store.settings.wordCount }}</span>
+          </div>
+          <div class="flex items-center justify-between gap-3 bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/50">
+            <span class="text-slate-500">Solved</span>
+            <span class="text-emerald-400">{{ store.usedIndexes.length }}</span>
+          </div>
+          <div class="flex items-center justify-between gap-3 bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/50">
+            <span class="text-slate-500">Skipped</span>
+            <span class="text-amber-400">{{ store.killedIndexes.length }}</span>
+          </div>
         </div>
+    </div>
+
+    <div class="flex items-stretch justify-between max-w-5xl mx-auto w-full px-4 sm:px-8 py-6 gap-4">
+      <div 
+        class="flex-1 flex flex-col items-center justify-center p-4 rounded-3xl border-2 transition-all duration-300"
+        :class="store.currentTeamTurn === 1 ? 'bg-violet-500/10 border-violet-500/50 shadow-lg shadow-violet-500/10 transform scale-105' : 'bg-slate-800/30 border-transparent opacity-60 scale-95'"
+      >
+        <span class="text-xs sm:text-sm font-bold uppercase tracking-widest mb-1" :class="store.currentTeamTurn === 1 ? 'text-violet-400' : 'text-slate-500'">
+          {{ teamOne }}
+        </span>
+        <span class="text-5xl sm:text-7xl font-black tabular-nums tracking-tighter" :class="store.currentTeamTurn === 1 ? 'text-white' : 'text-slate-400'">
+          {{ store.team1Score }}
+        </span>
       </div>
 
-      <div class="flex justify-center py-1 gap-4 text-sm text-slate-300 font-medium">
-        <div class="bg-slate-900 px-5 py-1 rounded-md">Total: {{ store.settings.wordCount }}</div>
-        <div class="bg-slate-900 px-5 py-1 rounded-md">Answered: {{ store.usedIndexes.length }}</div>
-        <div class="bg-slate-900 px-5 py-1 rounded-md">Skipped: {{ store.killedIndexes.length }}</div>
-        <!-- <div v-if="store.settings.allowTransfer" class="bg-slate-900 px-5 py-1 rounded-md">Transferred: {{ store.transferredCount }}</div> -->
+      <div 
+        class="flex-1 flex flex-col items-center justify-center p-4 rounded-3xl border-2 transition-all duration-300"
+        :class="store.currentTeamTurn === 2 ? 'bg-violet-500/10 border-violet-500/50 shadow-lg shadow-violet-500/10 transform scale-105' : 'bg-slate-800/30 border-transparent opacity-60 scale-95'"
+      >
+        <span class="text-xs sm:text-sm font-bold uppercase tracking-widest mb-1" :class="store.currentTeamTurn === 2 ? 'text-violet-400' : 'text-slate-500'">
+          {{ teamTwo }}
+        </span>
+        <span class="text-5xl sm:text-7xl font-black tabular-nums tracking-tighter" :class="store.currentTeamTurn === 2 ? 'text-white' : 'text-slate-400'">
+          {{ store.team2Score }}
+        </span>
       </div>
-    </header>
 
-    <div class="flex-1 p-6 overflow-y-auto">
-      <p class="text-center uppercase font-bold mb-6 text-slate-400">
-        Select an index
-      </p>
+    </div>
+  </header>
 
-      <div class="grid grid-cols-4 gap-3">
+    <div class="flex-1 p-6 pl-1 overflow-y-auto">
+      <div class="grid grid-cols-4 gap-10">
         <button 
           v-for="(word, index) in store.gameWords" 
           :key="index"
           @click="openModal(index, word)"
           :disabled="store.usedIndexes.includes(index) || store.killedIndexes.includes(index)"
-          class="aspect-square rounded-2xl flex items-center justify-center text-5xl font-black transition-all shadow-sm"
-          :class="[store.usedIndexes.includes(index) 
+          class="aspect-square relative animate-pulse shadow-lg  shadow-black rounded-full flex items-center  font-medium justify-center text-5xl transition-all"
+          :style="scatterCircles[index]"
+          :class="[ store.usedIndexes.includes(index) 
             ? 'bg-slate-800 text-slate-200 ring-2 ring-cyan-900 opacity-50 cursor-not-allowed' 
-            : store.killedIndexes.includes(index) ? 'cursor-not-allowed ring-2 ring-red-900/40 text-red-400/70' : 'ring-2 ring-cyan-500/50 bg-animated-gradient shadow-[0_0_20px_rgba(6,182,212,0.4)] text-white hover:bg-cyan-800 active:scale-95 shadow-indigo-500/30']">
+            : store.killedIndexes.includes(index) ? 'cursor-not-allowed ring-2 ring-red-900/40 text-red-400/70' : 'ring-2 ring-cyan-500/50 bg-animated-gradient shadow-[0_0_20px_rgba(6,182,212,0.4)] text-white hover:bg-cyan-800 active:scale-95']">
           <span v-if="!store.usedIndexes.includes(index) && !store.killedIndexes.includes(index)">?</span>
           <div v-if="store.usedIndexes.includes(index) || store.killedIndexes.includes(index)" class="text-[18px] -rotate-45">
             <p v-if="store.usedIndexes.includes(index)" class="text-green-400 text-xl">{{ store.indexWinner[index] === 1 ? '1' : '2' }}</p>
-            <p>{{ word }}</p>
           </div>
         </button>
       </div>
@@ -60,7 +91,7 @@
               
         <div class="relative w-full max-w-sm h-full space-y-5">
           <div class="mx-auto w-fit">
-            <button v-if="!isWordRevealed" @click="closeModalWithoutSwitchingTurn" class="font-mono text-lg font-black text-red-700 px-10 py-2 text-center ring ring-red-600 hover:text-white hover:bg-red-800 rounded-full">CHANGE SELECTION</button>
+            <button v-if="!isWordRevealed" @click="closeModalWithoutSwitchingTurn" class="font-mono text-lg font-black text-blue-400 px-10 py-2 text-center ring ring-blue-600 hover:text-white hover:blue-red-800 rounded-full">CHANGE SELECTION</button>
           </div>
 
           <div class="relative w-full max-w-sm h-[90%] bg-white rounded-3xl shadow-2xl flex flex-col p-6 overflow-hidden">
@@ -179,7 +210,7 @@
 
 <script setup>
 const store = useGameStore()
-const {teamOne, teamTwo, settings, useDefinition, indexWinner, useSound, allDefinitions} = storeToRefs(store)
+const {teamOne, teamTwo, settings, usedIndexes, killedIndexes, useDefinition, useSound, allDefinitions} = storeToRefs(store)
 const {initGame} = store
 const clickedIndex = ref(null)
 const showDefinition = ref(false)
@@ -187,19 +218,33 @@ const winAudio = new Audio('/win.mp3')
 const revealAudio = new Audio('/reveal.wav')
 revealAudio.volume = 0.5
 
-onMounted(() => {
-  store.loadState()
-})
+onMounted(() => store.loadState())
 
-// Modal & Game State
 const activeWord = ref(null) // { index, text }
 const isWordRevealed = ref(false)
 const timeLeft = ref(0)
 const timeUp = ref(false)
-const isTransferMode = ref(false) // True when timer ends and transfer is allowed
+const isTransferMode = ref(false)
 let timerInterval = null
 
-// Audio Alarm via Web API
+const scatterCircles = computed(() => {
+  let indexes = usedIndexes.value || killedIndexes.value
+
+  let object = {}
+
+  for (let index = 0; index < settings.value.wordCount - 1; index++) {
+    object[index] = {
+          rotate: `${index + 1 * (Math.random() * 100)}deg`, 
+          top: `${(Math.random() * 30)}px`, 
+          left: `${(Math.random() * 10)}px`, 
+      }
+  }
+
+  console.log('how');
+  
+  return object
+})
+
 const playAlarm = () => {
   if (!useSound.value) return
   try {
@@ -217,10 +262,7 @@ const playAlarm = () => {
 const playWinSound = () => {
     if (!useSound.value) return
       try {
-        // 2. Reset the time in case they click it again before it finishes
         winAudio.currentTime = 0; 
-        
-        // 3. Play the sound
         winAudio.play();
       } catch(e) { 
         console.error("Failed to play audio", e); 
@@ -230,9 +272,7 @@ const playWinSound = () => {
 const playRevealSound = () => {
     if (!useSound.value) return
       try {
-        // 2. Reset the time in case they click it again before it finishes
         revealAudio.currentTime = 0; 
-        // 3. Play the sound
         revealAudio.play();
       } catch(e) { 
         console.error("Failed to play audio", e); 
@@ -444,11 +484,7 @@ const closeModalAndSwitchTurn = () => {
   isTransferMode.value = false 
 }
 
-const restart = () => {
-  // clearState()
-  initGame(settings.value)
-}
-
+const restart = () => initGame(settings.value)
 const closeModalWithoutSwitchingTurn = () => activeWord.value = null
 
 onUnmounted(() => {

@@ -1,11 +1,9 @@
 <template>
-  <div class="flex flex-col items-center justify-center text-slate-100 p-6 py-0 space-y-5 font-sans">
+  <div class="flex flex-col items-center justify-center text-slate-100 space-y-5 font-sans">
     
-    <div class="text-center flex items-center gap-4 animate-fade-in-down">
-      <div class="inline-flex items-center justify-center w-8 h-8 bg-violet-500/10 rounded-full mb-6 text-4xl shadow-lg shadow-violet-500/20">
-        🎭
-      </div>
-      <h1 class="text-2xl font-extrabold mb-4 tracking-tight">Learn<span class="text-violet-400">Words</span></h1>
+    <div class="text-center flex items-center gap-2 animate-fade-in-down">
+      <span class="text-xl">🎲</span>
+      <h1 class="text-lg font-extrabold tracking-tight">Random<span class="text-violet-400">Words</span></h1>
     </div>
 
     <div class="flex flex-col md:flex-row gap-6 w-full max-w-4xl mb-10">

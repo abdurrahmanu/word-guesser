@@ -1,35 +1,29 @@
 <template>
   <main class="flex flex-col max-h-screen h-screen bg-slate-900 text-slate-100 font-sans">
     
-    <header class="flex items-center justify-between py-4 px-6 bg-slate-900 border-b border-slate-800 shadow-sm z-10 shrink-0">
-      <button @click="$router.push('/')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors rounded-xl px-4 py-2 font-semibold">
+    <header class="flex items-center justify-between py-4 px-3 bg-slate-900 border-b border-slate-800 shadow-sm z-10 shrink-0">
+      <button @click="$router.push('/')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors rounded-xl px-3 py-1 font-semibold">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
         Back
       </button>
-      <h1 class="text-lg font-extrabold uppercase tracking-widest text-teal-400 absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2">
-        <span class="text-2xl">📖</span> Mini Dictionary
-      </h1>
+      <h1 class="text-lg font-extrabold tracking-tight text-sky-700">Mini <span class="text-slate-400">Dictionary</span></h1>
       <div class="w-20"></div> </header>
 
-    <div class="px-4 py-6 overflow-auto flex-1 flex flex-col items-center custom-scrollbar">
+    <div class="px-4 py-3 overflow-auto flex-1 flex flex-col items-center custom-scrollbar">
       <div class="w-full max-w-3xl flex flex-col h-full space-y-6">
         
-        <div class="bg-slate-800/80 p-6 rounded-3xl shadow-lg border border-slate-700 backdrop-blur-sm shrink-0">
-          <label for="word" class="block font-bold text-slate-200 mb-3 text-lg">Search Vocabulary</label>
+        <div class="bg-slate-800/80 p-3 rounded-lg shadow-lg border border-slate-700 backdrop-blur-sm shrink-0">
+          <label for="word" class="block font-bold text-slate-200 mb-3 text-base">Search Vocabulary</label>
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </span>
+            <SvgSearch />
             <input 
               type="text" 
               id="word" 
               v-model="searchWord" 
               placeholder="Type a word..."
-              class="w-full pl-12 pr-4 py-4 bg-slate-900/50 border border-slate-700 rounded-2xl outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 text-white placeholder:text-slate-500 text-lg transition-all shadow-inner">
+              class="w-full pl-12 pr-4 py-2 bg-slate-900/50 border border-slate-700 rounded-2xl outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 text-white placeholder:text-slate-500 text-lg transition-all shadow-inner">
           </div>
         </div>
 
@@ -39,10 +33,10 @@
             <div 
               v-for="(definition, word, index) in searchedWords" 
               :key="index" 
-              class="bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 hover:border-teal-500/50 rounded-2xl p-5 transition-all duration-200 group"
+              class="bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 hover:border-teal-500/50 rounded-lg p-3 transition-all duration-200 group"
             >
               <div class="flex items-baseline justify-between mb-2 border-b border-slate-700/50 pb-2">
-                <h2 class="font-extrabold tracking-wide text-teal-400 uppercase group-hover:text-teal-300 transition-colors">
+                <h2 class="text-sm font-extrabold tracking-wide text-sky-700 uppercase group-hover:text-teal-300 transition-colors">
                   {{ word }}
                 </h2>
               </div>
