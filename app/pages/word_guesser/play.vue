@@ -65,8 +65,8 @@
     </div>
   </header>
 
-    <div class="flex-1 p-6 pl-1 overflow-y-auto">
-      <div class="grid grid-cols-4 gap-10">
+    <div class="flex-1 p-6 pl-1 overflow-auto mx-auto w-full max-w-500">
+      <div class="grid grid-cols-4 gap-10 max-w-150 w-[90%] mx-auto">
         <button 
           v-for="(word, index) in store.gameWords" 
           :key="index"

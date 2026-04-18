@@ -1,6 +1,6 @@
 <template>
   <main class="h-dvh p-4 flex flex-col bg-slate-900 text-white text-center">
-    <div class="max-w-200 w-full flex-1 overflow-auto">
+    <div class="max-w-200 w-full flex-1 overflow-auto mx-auto">
       <LandingPageDictionary v-if="currentPage === 'dictionary'" />
       <LandingPageWordGuesser v-if="currentPage === 'word_guesser'" />
       <LandingPageTictactoe v-if="currentPage === 'tictactoe'" />
