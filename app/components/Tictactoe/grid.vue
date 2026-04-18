@@ -46,7 +46,7 @@ import { storeToRefs } from 'pinia'
 
 const tictactoe = useTictactoe2()
 const {playGame, resetGrid, gameGrid, winningCells, historyGames, gameEnd} = storeToRefs(tictactoe)
-const {deleteGrid, setGrid, inSubGrid, play, cellValue, subGridIndex, historyGridIndex} = tictactoe
+const {deleteGrid, setGrid, inSubGrid, play, cellValue, historyGridIndex} = tictactoe
 
 const boxesContainer = ref(null)
 const numberOfBoxes = ref(0)
@@ -59,9 +59,7 @@ const grid = ref([])
 const style = ref({})
 const grid_ = ref([])
 
-// --- TEMPLATE LOGIC HELPERS ---
 
-// 1. Handle Clicks (Replaces inline @click.self)
 const handleClick = (cell) => {
     if (!playGame.value) return;
 
@@ -76,11 +74,10 @@ const handleClick = (cell) => {
     }
 }
 
-// 2. Handle Cell Content (Replaces inline {{ ... }})
 const getCellValue = (cell) => {
     if (!playGame.value) return '';
 
-    // Check if it's in the active game grid
+    // Check if it is in active game grid
     if (gameGrid.value.length && inSubGrid(cell) && !gameEnd.value) {
         const val = cellValue(cell);
         if (val && gameGrid.value[val[0]][val[1]]) {
@@ -88,7 +85,7 @@ const getCellValue = (cell) => {
         }
     }
 
-    // Check if it's in the history grids
+    // Check if in history grids
     const historyCells = historyGames.value.flatMap(game => game.grid).flat();
     const found = historyCells.find(c => c.row === cell.row && c.col === cell.col);
     if (found && found.value) {
@@ -98,30 +95,24 @@ const getCellValue = (cell) => {
     return '';
 }
 
-// 3. Dynamic Text Coloring
 const getTextColor = (text) => {
     if (text === 'X') return 'text-cyan-400';
     if (text === 'O') return 'text-pink-400';
     return '';
 }
 
-// 4. Prioritized Class Logic (Fixes the overwriting bug!)
 const getCellClasses = (cell) => {
     if (!playGame.value) return 'border border-slate-800';
 
     let classes = ['cursor-pointer'];
 
-    // CHECK 1: Is it a winning cell? (Highest Priority)
     const isWinCell = winningCells.value.some(c => c.row === cell.row && c.col === cell.col) || 
                       historyGames.value.flatMap(g => g.winCells).some(c => c.row === cell.row && c.col === cell.col);
     
-    // CHECK 2: Is it in the active playing subgrid?
     const isActiveSubgrid = inSubGrid(cell);
 
-    // CHECK 3: Is it in a historical (completed) subgrid?
     const isHistorySubgrid = historyGames.value.flatMap(g => g.grid).flat().some(c => c.row === cell.row && c.col === cell.col);
 
-    // Apply classes based on strict priority
     if (isWinCell) {
         classes.push('win-cell');
     } else if (isActiveSubgrid) {
@@ -136,7 +127,6 @@ const getCellClasses = (cell) => {
 }
 
 
-// --- RESIZING LOGIC ---
 function resizerFunction () {    
     squareLength.value = 55
 
@@ -187,9 +177,8 @@ watch(() => boxesContainer.value, (newValue) => {
 <style scoped>
 @reference "tailwindcss";
 
-
 .cell {
-    @apply w-fit h-fit font-black text-3xl flex items-center justify-center font-mono;
+    @apply w-fit h-fit font-black text-3xl flex items-center justify-center font-mono ring ring-slate-800;
 }
 
 .boxes-container {
@@ -197,7 +186,7 @@ watch(() => boxesContainer.value, (newValue) => {
 }
 /* 1. Empty/Background Cells */
 .empty-cell {
-    @apply border border-slate-800/50 hover:bg-slate-800/30 transition-colors;
+    @apply border border-slate-700/50 hover:bg-slate-800/30 transition-colors; 
 }
 
 /* 2. Active Playing Subgrid */

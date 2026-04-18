@@ -1,6 +1,6 @@
 <template>
   <main class="h-dvh p-4 flex flex-col bg-slate-900 text-white text-center">
-    <div class="max-w-200 w-full">
+    <div class="max-w-200 w-full flex-1 overflow-auto">
       <LandingPageDictionary v-if="currentPage === 'dictionary'" />
       <LandingPageWordGuesser v-if="currentPage === 'word_guesser'" />
       <LandingPageTictactoe v-if="currentPage === 'tictactoe'" />
@@ -10,7 +10,7 @@
       <LandingPageScrambledWords v-if="currentPage === 'scrambled_words'" />
     </div>
     
-    <div class="flex-1 flex flex-col justify-end items-center">
+    <div>
       <div class="flex max-w-screen w-full px-2 gap-3 justify-center">
         <button @click="prev" :class="[currentPage === pages[0] ? 'ring-white/20 text-white/20' : 'ring-white hover:bg-white hover:text-indigo-600']" class="w-fit ring rounded-md text-white text-4xl font-bold px-4 py-1 -ml-2 ">←</button>
         <button @click="goTo" :class="[buttonColor]" class="inline-block flex-1 max-w-110 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95 uppercase">{{normalizedButtonText}}</button>

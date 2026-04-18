@@ -118,9 +118,8 @@ const gameType = ref<'human' | 'AI'>('human')
   }
 
   // Renamed parameter to avoid TS type shadowing
-  function restart(shouldRestart: boolean) {
+  function restart() {
     openModal.value = false;
-    if (!shouldRestart) return;
     reset();
     playerOneWins.value = 0;
     playerTwoWins.value = 0;
