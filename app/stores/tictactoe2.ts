@@ -30,10 +30,13 @@ export const useTictactoe2 = defineStore('tictactoe2', () => {
   const resetGrid = ref<boolean>(false);
   const gameEnd = ref<boolean>(false);
   const playerTurn = ref<Player>('');
-  const numberOfRows = ref(90)
-  const numberOfCols = ref(90)
+  const numberOfRows = ref(15)
+  const squareSize = ref(50)
+  const numberOfCols = ref(15)
   const player1 = ref('')
   const player2 = ref('')
+  const useCustomSize = ref(true)
+  const useScreenWidth = ref(false)
   
   const gameScores = ref<Record<string, number>>({
     'x': 0,
@@ -305,9 +308,7 @@ export const useTictactoe2 = defineStore('tictactoe2', () => {
     }
   };
 
-  const setGrid = (referenceCell: CellCoordinates, totalCols: number, totalRows: number) => {
-    console.log('wow');
-    
+  const setGrid = (referenceCell: CellCoordinates, totalCols: number, totalRows: number) => {    
     let row = referenceCell.row;
     let col = referenceCell.col;
     
@@ -367,12 +368,15 @@ export const useTictactoe2 = defineStore('tictactoe2', () => {
     startGame,
     playGame,
     playerTurn,
+    squareSize,
     gameGrid,
     gameEnd,
     winningCells,
     numberOfCols,
     numberOfRows,
     historyGames,
+    useCustomSize,
+    useScreenWidth,
     clearAll,
     cellValue,
     createGameGrid,

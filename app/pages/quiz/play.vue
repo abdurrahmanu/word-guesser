@@ -1,34 +1,68 @@
 <template>
   <main class="flex flex-col h-screen bg-slate-900 text-slate-100 font-sans">
     
-    <header class="flex justify-between items-center py-4 px-6 bg-slate-900 border-b border-slate-800 shadow-sm shrink-0">
+<header class="bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 shadow-xl z-20 relative shrink-0 flex flex-col">
       
-      <div class="flex gap-6 items-center">
-        <div :class="['flex flex-col', settings.mode === 'versus' && currentPlayer === 1 ? 'text-amber-400' : 'text-slate-400']">
-          <span class="text-xs font-bold uppercase tracking-widest">{{ settings.playerOne || 'Player 1' }}</span>
-          <span class="text-xl text-center font-black">{{ scores.player1.toLocaleString() }}</span>
+      <div class="flex justify-between items-center px-4 sm:px-6 py-3 border-b border-slate-800/50">
+        <button @click="$router.push('/quiz')" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider uppercase transition-colors border border-slate-700/50">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back
+        </button>
+
+        <span :class="[gameState === 'playing' ? 'text-amber-500' : 'text-slate-500 blur-sm']" class="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] transition-all">
+          {{ gameState === 'playing' ? 'In Progress' : 'Paused' }}
+        </span>
+
+        <button @click="restart" class="flex items-center gap-2 text-slate-400 hover:text-rose-400 bg-slate-800/50 hover:bg-rose-500/10 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider uppercase transition-colors border border-slate-700/50 hover:border-rose-500/30">
+          Restart
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="flex justify-center items-center gap-2 shrink-0 px-2 sm:px-6 pt-4">
+          <div class="flex gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
+            <div class="flex items-center justify-between gap-3 bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/50">
+              <span class="text-slate-500">Question</span>
+              <span class="text-amber-400">{{ currentQuestionIndex + 1 }}</span>
+            </div>
+            <div class="flex items-center justify-between gap-3 bg-slate-800/80 px-3 py-1.5 rounded-md border border-slate-700/50">
+              <span class="text-slate-500">Total</span>
+              <span class="text-slate-200">{{ settings.questionCount }}</span>
+            </div>
+          </div>
+      </div>
+
+      <div class="flex items-stretch justify-center max-w-5xl mx-auto w-full px-4 sm:px-8 py-6 gap-4">
+        
+        <div 
+          class="flex-1 flex flex-col items-center justify-center p-4 rounded-3xl border-2 transition-all duration-300"
+          :class="(!settings.mode || settings.mode !== 'versus' || currentPlayer === 1) ? 'bg-amber-500/10 border-amber-500/50 shadow-lg shadow-amber-500/10 transform scale-105' : 'bg-slate-800/30 border-transparent opacity-60 scale-95'"
+        >
+          <span class="text-xs sm:text-sm font-bold uppercase tracking-widest mb-1" :class="(!settings.mode || settings.mode !== 'versus' || currentPlayer === 1) ? 'text-amber-400' : 'text-slate-500'">
+            {{ settings.playerOne || 'Player 1' }}
+          </span>
+          <span class="text-5xl sm:text-7xl font-black tabular-nums tracking-tighter" :class="(!settings.mode || settings.mode !== 'versus' || currentPlayer === 1) ? 'text-white' : 'text-slate-400'">
+            {{ scores.player1.toLocaleString() }}
+          </span>
         </div>
 
-        
-        <div v-if="settings.mode === 'versus'" class="w-px h-8 bg-slate-700"></div>
-        
-        <div v-if="settings.mode === 'versus'" :class="['flex flex-col', currentPlayer === 2 ? 'text-amber-400' : 'text-slate-400']">
-            <span class="text-xs font-bold uppercase tracking-widest">{{ settings.playerTwo || 'Player 2' }}</span>
-            <span class="text-xl font-black text-center">{{ scores.player2.toLocaleString() }}</span>
+        <div 
+          v-if="settings.mode === 'versus'"
+          class="flex-1 flex flex-col items-center justify-center p-4 rounded-3xl border-2 transition-all duration-300"
+          :class="currentPlayer === 2 ? 'bg-amber-500/10 border-amber-500/50 shadow-lg shadow-amber-500/10 transform scale-105' : 'bg-slate-800/30 border-transparent opacity-60 scale-95'"
+        >
+          <span class="text-xs sm:text-sm font-bold uppercase tracking-widest mb-1" :class="currentPlayer === 2 ? 'text-amber-400' : 'text-slate-500'">
+            {{ settings.playerTwo || 'Player 2' }}
+          </span>
+          <span class="text-5xl sm:text-7xl font-black tabular-nums tracking-tighter" :class="currentPlayer === 2 ? 'text-white' : 'text-slate-400'">
+            {{ scores.player2.toLocaleString() }}
+          </span>
         </div>
-    </div>
 
-    <div class="flex gap-4">
-      <button @click="$router.push('/quiz')" class="px-4 py-1  rounded-md bg-slate-700 h-fit text-slate-300 hover:bg-red-500 hover:text-white transition-colors">
-        BACK
-      </button>
-      <button @click="restart" class="px-4 py-1  rounded-md bg-slate-700 h-fit text-slate-300 hover:bg-red-500 hover:text-white transition-colors">
-        RESTART
-      </button>
-    </div>
-
-      <div class="text-slate-500 font-bold bg-slate-800 px-4 py-2 rounded-lg">
-        Q: {{ currentQuestionIndex + 1 }} / {{ settings.questionCount }}
       </div>
     </header>
 
@@ -40,30 +74,32 @@
           <div class="h-full bg-amber-500 transition-all duration-1000 linear" :style="{ width: `${(timeLeft / settings.countdownTime) * 100}%` }"></div>
         </div>
 
-        <div class="bg-slate-800/80 p-8 md:p-12 rounded-3xl shadow-2xl border border-slate-700 text-center relative mb-8">
+        <div class="bg-slate-800 p-8 md:p-12 rounded-3xl shadow-xl border border-slate-700 text-center relative mb-8">
           <h2 class="text-3xl md:text-5xl font-bold leading-tight mt-6 mb-2 text-slate-100">
             <span v-html="formatQuestion(currentQuestion.question)"></span>
           </h2>
         </div>
 
-    <div class="w-full flex flex-col sm:flex-row gap-3">
-      <input 
-        v-model="guess" 
-        @keyup.enter="submitAnswer" 
-        type="text" 
-        placeholder="Input Answer..." 
-        autofocus
-        class="flex-1 p-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-lg transition-colors">
-      <button 
-        @click="submitAnswer" 
-        :disabled="!guess.trim()"
-        class="px-8 py-4 bg-green-600 text-white rounded-xl font-bold text-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md">
-        Guess
-      </button>
-    </div>
+        <div class="w-full flex flex-col sm:flex-row gap-3">
+          <input 
+            v-model="guess" 
+            @keyup.enter="submitAnswer" 
+            type="text" 
+            placeholder="Input Answer..." 
+            autofocus
+            class="flex-1 p-4 bg-slate-900 border-2 border-slate-700 text-white rounded-xl focus:outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/20 text-lg transition-all"
+          >
+          <button 
+            @click="submitAnswer" 
+            :disabled="!guess.trim()"
+            class="px-8 py-4 bg-amber-500 text-slate-900 rounded-xl font-black text-lg hover:bg-amber-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+          >
+            Guess
+          </button>
+        </div>
       </div>
 
-      <div v-else-if="gameState === 'feedback'" class="bg-slate-800 p-10 rounded-3xl border border-slate-700 text-center shadow-2xl">
+      <div v-else-if="gameState === 'feedback'" class="bg-slate-800 p-10 rounded-3xl border border-slate-700 text-center shadow-xl">
         <h3 class="text-5xl font-black mb-4" :class="lastGuessCorrect ? 'text-emerald-400' : 'text-rose-400'">
           {{ lastGuessCorrect ? 'CORRECT!' : 'INCORRECT' }}
         </h3>
@@ -71,28 +107,28 @@
           The answer was <strong class="text-white">{{ currentQuestion?.answer.toUpperCase() }}</strong>.
         </p>
         
-        <button @click="nextTurn" class="px-10 py-4 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-lg uppercase tracking-widest w-full">
+        <button @click="nextTurn" class="px-10 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-black rounded-xl text-lg uppercase tracking-widest w-full transition-colors">
           {{ currentQuestionIndex + 1 >= settings.questionCount ? 'View Final Scores' : 'Next Question ➔' }}
         </button>
       </div>
 
       <div v-else-if="gameState === 'gameover'" class="text-center">
         <div class="text-6xl mb-6">🏆</div>
-        <h2 class="text-4xl font-black mb-10 uppercase tracking-widest text-amber-400">Game Over</h2>
+        <h2 class="text-4xl font-black mb-10 uppercase tracking-widest text-amber-500">Game Over</h2>
         
         <div class="grid gap-4 mb-10" :class="settings.mode === 'versus' ? 'grid-cols-2' : 'grid-cols-1'">
-          <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+          <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm">
             <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">{{ settings.playerOne || 'Player 1' }}</p>
             <p class="text-4xl font-black text-white">{{ scores.player1.toLocaleString() }}</p>
           </div>
           
-          <div v-if="settings.mode === 'versus'" class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+          <div v-if="settings.mode === 'versus'" class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-sm">
             <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">{{ settings.playerTwo || 'Player 2' }}</p>
             <p class="text-4xl font-black text-white">{{ scores.player2.toLocaleString() }}</p>
           </div>
         </div>
 
-        <button @click="restart" class="px-10 py-4 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-lg uppercase tracking-widest">
+        <button @click="restart" class="px-10 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-black rounded-xl text-lg uppercase tracking-widest transition-colors shadow-md">
           Play Again
         </button>
       </div>
@@ -105,8 +141,8 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 interface Quiz {
-    question: string,
-    answer: string
+  question: string,
+  answer: string
 }
 
 const data = await useFetch('/quiz.json')
@@ -135,8 +171,8 @@ let timer: any = null
 
 // --- LOGIC ---
 const formatQuestion = (text: string) => {
-  // Makes the "____" blank look slightly different/underlined visually
-  return text.replace(/____/g, '<span class="border-b-4 border-amber-500/50 px-6 inline-block mx-1"></span>')
+  // Kept the amber accent for the blank underline
+  return text.replace(/____/g, '<span class="border-b-4 border-amber-500 px-6 inline-block mx-1"></span>')
 }
 
 const startTimer = () => {
@@ -197,23 +233,18 @@ const shuffleQuestions = (array: any[]) => {
   }
 }
 
-// Update your restart function
 const restart = () => {
-  // 1. Shuffle the questions so the next game is fresh!
   shuffleQuestions(quizData)
 
-  // 2. Reset the tracking variables
   currentQuestionIndex.value = 0
   currentQuestion.value = quizData[0]
   currentPlayer.value = 1
   scores.value = { player1: 0, player2: 0 }
 
-  // 3. Reset the UI state
   guess.value = ''
   lastGuessCorrect.value = false
   gameState.value = 'playing'
 
-  // 4. Start the timer for the new first question
   startTimer()
 }
 

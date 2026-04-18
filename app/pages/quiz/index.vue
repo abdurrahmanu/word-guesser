@@ -50,8 +50,8 @@
                   class="uppercase py-4 rounded-xl font-bold transition-all duration-200 text-xs tracking-wider border flex items-center justify-center gap-2"
                   :class="settings.mode === type ? 'bg-amber-600 text-white border-amber-500 shadow-md shadow-amber-500/20' : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500'"
                 >
-                  <span v-if="type === 'solo'">👤 Solo Play</span>
-                  <span v-else>👥 Two Player</span>
+                  <span v-if="type === 'solo'">Solo Play</span>
+                  <span v-else>Two Player</span>
                 </button>
             </div>
 

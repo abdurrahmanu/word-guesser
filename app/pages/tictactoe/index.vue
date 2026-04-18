@@ -14,7 +14,7 @@
     <div class="overflow-auto flex-1 py-4 custom-scrollbar">
       <div class="flex-1 space-y-6 max-w-2xl w-[95%] mx-auto">
         
-        <div class="bg-slate-800/80 p-6 rounded-3xl shadow-lg border border-slate-700 backdrop-blur-sm">
+        <div class="bg-slate-800/80 p-6 rounded-lg shadow-lg border border-slate-700 backdrop-blur-sm">
           <label class="block font-bold text-slate-200 mb-4 text-base">Select Board Type</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
@@ -53,19 +53,35 @@
           </div>
         </div>
 
-        <div v-if="settings.gridMode === 'multiple'" class="flex w-full gap-4">
-          <div class="w-full bg-slate-800/80 p-3 rounded-xl shadow-lg border border-slate-700 backdrop-blur-sm">
-            <label class="block font-bold text-slate-200 mb-2">Number of Cols</label>
-            <input type="number" v-model="numberOfCols" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-white transition-all" min="4" max="100">
+        <div v-if="settings.gridMode === 'multiple'" class="bg-slate-800/80 p-6 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <label class="block font-bold text-slate-200 text-base">Custom Grid Size</label>
+            </div>
+            <button 
+              @click="toggleGridSize" 
+              class="w-14 h-8 rounded-full transition-colors duration-300 relative flex items-center px-1"
+              :class="useCustomSize ? 'bg-orange-500' : 'bg-slate-700'">
+              <div 
+                class="w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300"
+                :class="useCustomSize ? 'translate-x-6' : 'translate-x-0'"
+              ></div>
+            </button>
           </div>
-
-          <div class="w-full bg-slate-800/80 p-3 rounded-xl shadow-lg border border-slate-700 backdrop-blur-sm">
-            <label class="block font-bold text-slate-200 mb-2">Number of Rows</label>
-            <input type="number" v-model="numberOfRows" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-white transition-all" min="10" max="120">
+          <div class="flex w-full gap-4">
+            <div class="w-full py-3 rounded-xl shadow-lg backdrop-blur-sm">
+              <label :class="[!useCustomSize && 'text-slate-200/20']" class="block font-bold text-slate-200 mb-2">Number of Cols</label>
+              <input :disabled="!useCustomSize" type="number" maxlength="20" v-model="numberOfCols" class="disabled:bg-black/10 disabled:text-white/10 w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-white transition-all" min="4" max="100">
+            </div>
+            
+            <div class="w-full py-3 rounded-xl shadow-lg backdrop-blur-sm">
+              <label :class="[!useCustomSize && 'text-slate-200/20']" class="block font-bold text-slate-200 mb-2">Number of Rows</label>
+              <input :disabled="!useCustomSize" type="number" maxlength="20" v-model="numberOfRows" class="disabled:bg-black/10 disabled:text-white/10 w-full bg-slate-900/50 border border-slate-700 rounded-xl p-3 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-white transition-all" min="10" max="120">
+            </div>
           </div>
         </div>
 
-        <div class="bg-slate-800/80 p-6 rounded-3xl shadow-lg border border-slate-700 backdrop-blur-sm">
+        <div class="bg-slate-800/80 p-6 rounded-lg shadow-lg border border-slate-700 backdrop-blur-sm">
           <div class="flex items-center justify-between mb-2">
             <div>
               <label class="block font-bold text-slate-200 text-base">First To Reach</label>
@@ -74,8 +90,7 @@
             <button 
               @click="toggleFirstToReach = !toggleFirstToReach" 
               class="w-14 h-8 rounded-full transition-colors duration-300 relative flex items-center px-1"
-              :class="toggleFirstToReach ? 'bg-orange-500' : 'bg-slate-700'"
-            >
+              :class="toggleFirstToReach ? 'bg-orange-500' : 'bg-slate-700'">
               <div 
                 class="w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300"
                 :class="toggleFirstToReach ? 'translate-x-6' : 'translate-x-0'"
@@ -136,13 +151,20 @@ const tictactoe = useTictactoe()
 const {gameType, toggleFirstToReach, settings} = storeToRefs(tictactoe)
 
 const tictactoe2 = useTictactoe2()
-const {numberOfCols, numberOfRows} = storeToRefs(tictactoe2)
+const {numberOfCols, numberOfRows, useCustomSize, useScreenWidth} = storeToRefs(tictactoe2)
 
 watch(toggleFirstToReach, (newVal) => {
   if (newVal && settings.value.targetScore < 1) {
     settings.value.targetScore = 3 // Default fallback
   }
 })
+
+const toggleGridSize = () => {
+  useCustomSize.value = !useCustomSize.value
+  if (useCustomSize.value) {
+    useScreenWidth.value = false
+  } else useScreenWidth.value = true
+}
 
 const startGame = () => {  
   // Here you would inject these settings into your Pinia store

@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <div v-if="!revealed" class="w-full flex flex-col sm:flex-row gap-3">
+    <div v-if="!revealed" class="w-full flex flex-col sm:flex-row gap-3 px-5">
       <input 
         v-model="guess" 
         @keyup.enter="checkGuess" 
@@ -37,13 +37,13 @@
       </button>
     </div>
 
-    <div v-else class="w-full text-center bg-gray-50 rounded-xl shadow-sm">
+    <div v-else class="w-full text-center rounded-xl shadow-sm px-5">
       <h3 class="text-3xl font-extrabold mb-3" 
           :class="guessWasCorrect ? 'text-green-600' : 'text-red-600'">
         {{ guessWasCorrect ? '🎉 Correct!' : '⏰ Time up!' }}
       </h3>
       
-      <p class="text-xl font-bold py-5 text-gray-900 border-b-2 border-blue-400">{{ currentCountry?.name }}</p>
+      <p class="text-xl font-bold py-5 text-gray-900">{{ currentCountry?.name }}</p>
       
       <button 
         @click="startRound" 
@@ -57,15 +57,24 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-// Interfaces matching your data structure
 interface Country {
-    capital: string
-    code: string
-    continent: string
-    flag_1x1: string
-    flag_4x3: string
-    iso: boolean
-    name: string
+  capital: string
+  code: string
+  continent: string
+  flag_1x1: string
+  flag_4x3: string
+  iso: boolean
+  name: string
+  languages: Record<string, string>
+  main_language_hello: string
+  facts: string
+  government_type: string
+  main_location: string
+  most_recent_population: number
+  development_status: string
+  main_mountains_or_rivers: string
+  main_landmarks: string
+  three_main_cities: string[]
 }
 
 // Props passed down from Geography.vue

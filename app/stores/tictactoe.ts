@@ -23,7 +23,7 @@ export const useTictactoe = defineStore('tictactoe', () => {
   const openModal = ref<boolean>(false);
 
   const settings = ref({
-  gridMode: 'single', // 'single' or 'multiple'
+  gridMode: 'multiple',
   targetScore: 3
 })
 

@@ -15,7 +15,8 @@
           <span class="text-xl">🌍</span> GEOGRAPHY
         </h1>
         
-        <div class="w-10 sm:w-20"></div> </header>
+        <div class="w-10 sm:w-20"></div> 
+      </header>
       
       <div class="w-full bg-slate-900/95 backdrop-blur-md border-b border-slate-800/80 shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center overflow-x-auto py-3 gap-2 sm:gap-3 hide-scrollbar">
@@ -70,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import CountryViewer from '../../components/Geography/countryViewer.vue'
 import FlagGame from '../../components/Geography/flagGame.vue'
 import MapGame from '../../components/Geography/mapGame.vue'
@@ -77,14 +79,25 @@ import CapitalGame from '../../components/Geography/capitalGame.vue'
 import SettingsPanel from '../../components/Geography/settingsPanel.vue'
 import ScrambledCountries from '~/components/Geography/scrambledCountries.vue'
 
+// Updated Schema
 interface Country {
-    capital: string
-    code: string
-    continent: string
-    flag_1x1: string
-    flag_4x3: string
-    iso: boolean
-    name: string
+  capital: string
+  code: string
+  continent: string
+  flag_1x1: string
+  flag_4x3: string
+  iso: boolean
+  name: string
+  languages: Record<string, string>
+  main_language_hello: string
+  facts: string
+  government_type: string
+  main_location: string
+  most_recent_population: number
+  development_status: string
+  main_mountains_or_rivers: string
+  main_landmarks: string
+  three_main_cities: string[]
 }
 
 // Fetch data once at the top level
@@ -109,7 +122,7 @@ const tabs = [
   { id: 'flag', label: 'Flag Game', component: FlagGame },
   { id: 'map', label: 'Map Game', component: MapGame },
   { id: 'capital', label: 'Capital Game', component: CapitalGame },
-  {id: 'scramble', label: 'Scramble Countries', component: ScrambledCountries},
+  { id: 'scramble', label: 'Scramble Countries', component: ScrambledCountries },
   { id: 'settings', label: '⚙️', component: SettingsPanel },
 ]
 

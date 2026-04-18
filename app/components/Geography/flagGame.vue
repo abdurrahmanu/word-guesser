@@ -5,13 +5,13 @@
       <p class="text-7xl text-center" :class="{'text-red-500': timeLeft <= 3}">{{ timeLeft }}s</p>
     </div>
 
-    <div class="w-full h-64 bg-gray-100 border border-slate-200 flex items-center justify-center mb-6 rounded overflow-hidden">
+    <div class="px-5 w-full h-64 flex items-center justify-center mb-6 rounded overflow-hidden">
       <img v-if="currentCountry" 
            :src="`/flags/4X3/${currentCountry.code.toLowerCase()}.svg`" 
            :class="['w-full h-full object-cover', blurClass]">
     </div>
     
-    <div v-if="!revealed" class="w-full flex flex-col sm:flex-row gap-3">
+    <div v-if="!revealed" class="px-5 w-full flex flex-col sm:flex-row gap-3">
       <input 
         v-model="guess" 
         @keyup.enter="checkGuess" 
@@ -32,7 +32,7 @@
         {{ guessWasCorrect ? 'Correct!' : 'Time up!' }}
       </h3>
       <p class="text-5xl mb-6 py-4">{{ currentCountry?.name }}</p>
-      <button @click="startRound" class="px-40 py-3 hover:bg-blue-600 bg-white text-blue-600 blue-500 ring hover:text-white rounded-lg">Next Flag</button>
+      <button @click="startRound" class="px-40 py-3 hover:bg-blue-600 font-bold bg-white text-blue-600 blue-500 ring hover:text-white rounded-lg">Next Flag</button>
     </div>
   </div>
 </template>

@@ -1,24 +1,20 @@
 <template>
-  <div class="flex flex-col items-center max-w-lg mx-auto w-full">
+  <div class="flex flex-col items-center max-w-lg mx-auto w-full px-5">
     <div class="w-full mb-4 text-lg font-bold">
       <p class="text-center text-3xl py-5">Score: {{ score }}</p>
       <p class="text-7xl text-center" :class="{'text-red-500': timeLeft <= 3}">{{ timeLeft }}s</p>
     </div>
 
-    <div class="w-full h-56 bg-purple-50 border-2 border-purple-200 flex flex-col items-center justify-center mb-6 rounded-xl shadow-inner p-6 text-center">
-      <div v-if="!currentCountry" class="text-gray-400 animate-pulse">
+    <div class="w-full h-56 flex flex-col items-center justify-center mb-6 rounded-xl shadow-inner p-6 text-center">
+      <div v-if="!currentCountry" class="text-gray-200 animate-pulse">
         Loading question...
       </div>
       <div v-else class="flex flex-col items-center">
-        <span class="text-gray-500 font-semibold mb-2 uppercase tracking-wider text-sm">
-          {{ questionType === 'guessCapital' ? 'Name the Capital' : 'Name the Country' }}
-        </span>
-        
-        <h2 v-if="questionType === 'guessCapital'" class="text-3xl font-extrabold text-gray-800">
+        <h2 v-if="questionType === 'guessCapital'" class="text-3xl font-extrabold text-gray-400">
           What is the capital of <br> <span class="text-purple-700">{{ currentCountry.name }}</span>?
         </h2>
         
-        <h2 v-else class="text-3xl font-extrabold text-gray-800">
+        <h2 v-else class="text-3xl font-extrabold text-gray-200">
           <span class="text-purple-700">{{ currentCountry.capital }}</span> <br> is the capital of which country?
         </h2>
       </div>
@@ -42,26 +38,25 @@
       </button>
     </div>
 
-    <div v-else class="w-full text-center bg-gray-50 p-6">
+    <div v-else class="w-full text-center p-6">
       <h3 class="text-3xl font-extrabold mb-3" 
           :class="guessWasCorrect ? 'text-green-600' : 'text-red-600'">
-        {{ guessWasCorrect ? '🎉 Correct!' : '⏰ Time up!' }}
+        {{ guessWasCorrect ? 'Correct!' : 'Time up!' }}
       </h3>
       
-      <p class="text-2xl text-gray-700 py-6">
+      <p class="text-2xl text-gray-200 py-6">
         <span v-if="questionType === 'guessCapital'">
-          The capital of {{ currentCountry?.name }} is <strong class="text-gray-900 border-b-2 border-purple-400">{{ currentCountry?.capital }}</strong>
+          The capital of {{ currentCountry?.name }} is <strong class="text-green-400">{{ currentCountry?.capital }}</strong>
         </span>
         <span v-else>
-          {{ currentCountry?.capital }} is the capital of <strong class="text-gray-900 border-b-2 border-purple-400">{{ currentCountry?.name }}</strong>
+          {{ currentCountry?.capital }} is the capital of <strong class="text-green-400">{{ currentCountry?.name }}</strong>
         </span>
       </p>
       
       <button 
         @click="startRound" 
         class="px-8 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition shadow-md w-full sm:w-auto"
-      >
-        Next Question 🏛️
+      > Next Question
       </button>
     </div>
   </div>
@@ -71,13 +66,23 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 interface Country {
-    capital: string
-    code: string
-    continent: string
-    flag_1x1: string
-    flag_4x3: string
-    iso: boolean
-    name: string
+  capital: string
+  code: string
+  continent: string
+  flag_1x1: string
+  flag_4x3: string
+  iso: boolean
+  name: string
+  languages: Record<string, string>
+  main_language_hello: string
+  facts: string
+  government_type: string
+  main_location: string
+  most_recent_population: number
+  development_status: string
+  main_mountains_or_rivers: string
+  main_landmarks: string
+  three_main_cities: string[]
 }
 
 const props = defineProps<{

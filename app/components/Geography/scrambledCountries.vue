@@ -1,11 +1,11 @@
 <template>
-  <div class="flex flex-col items-center max-w-lg mx-auto w-full">
+  <div class="flex flex-col items-center max-w-lg mx-auto w-full px-5">
     <div class="w-full mb-4 text-lg font-bold">
       <p class="text-center text-3xl py-5">Score: {{ score }}</p>
       <p class="text-7xl text-center" :class="{'text-red-500': timeLeft <= 3}">{{ timeLeft }}s</p>
     </div>
 
-    <div class="w-full bg-indigo-50 border-2 border-indigo-200 flex flex-col items-center justify-center mb-6 rounded-xl shadow-inner p-8 text-center min-h-[200px]">
+    <div class="w-full flex flex-col items-center justify-center mb-6 rounded-xl shadow-inner p-8 text-center min-h-50">
       <span class="text-slate-500 font-bold mb-4 uppercase tracking-widest text-xs">Unscramble the {{ isCapital ? 'Capital' : 'Country' }}</span>
       <h2 v-if="scrambledWord" class="text-4xl sm:text-5xl font-extrabold text-indigo-600 tracking-[0.2em] uppercase break-all">
         {{ scrambledWord }}
@@ -28,12 +28,14 @@
       </button>
     </div>
 
-    <div v-else class="w-full text-center bg-slate-50 p-6 rounded-xl">
+    <div v-else class="w-full text-center p-6 rounded-xl">
       <h3 class="text-3xl font-extrabold mb-3" :class="guessWasCorrect ? 'text-green-600' : 'text-red-600'">
         {{ guessWasCorrect ? 'Spot On!' : 'Time Up!' }}
       </h3>
-      <p class="text-2xl py-3 text-slate-700 mb-6">The correct spelling is <strong class="text-slate-900">{{ currentWord }}</strong></p>
-      <button @click="startRound" class="px-40 py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition shadow-md">Next Word</button>
+      <p class="text-2xl py-2 text-slate-400">The word is </p>
+        <p class="text-green-400 text-3xl mb-4">{{ currentWord }}</p>
+
+      <button @click="startRound" class="mt-5 px-30 py-4 bg-indigo-600 text-white whitespace-nowrap rounded-xl font-bold hover:bg-indigo-700 transition shadow-md">Next Word</button>
     </div>
   </div>
 </template>

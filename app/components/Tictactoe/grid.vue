@@ -1,38 +1,32 @@
 <template>
-    <div ref="boxesContainer" class="boxes-container bg-slate-900 overflow-hidden relative">
-        
-        <div class="absolute inset-0 pointer-events-none bg-linear-to-br from-cyan-900/20 to-pink-900/20 z-0"></div>
-
+    <div ref="boxesContainer" 
+    :style="gridSizing" 
+    :class="[!useCustomSize && 'flex flex-wrap w-full']" class="boxes-container bg-slate-900 overflow-scroll">
         <div 
             v-for="(cell, i) in grid" 
             :key="i"
             :id="i.toString()"
-            class="cell relative transition-all duration-300 z-10"
+            class="cell relative transition-all duration-100 w-full h-full"
             :style="[style, {'--i': i}]"
             :data-row="cell.row" 
             :data-col="cell.col" 
             :class="getCellClasses(cell)"
-            @click.self="handleClick(cell)"
-        >
+            @click.self="handleClick(cell)">
             <span class="pointer-events-none drop-shadow-md" :class="getTextColor(getCellValue(cell))">
                 {{ getCellValue(cell) }}
             </span>
-
             <button 
                 v-if="historyGridIndex(cell) === 0 && playGame"
                 @click.stop="deleteGrid(cell)" 
                 class="absolute w-7 h-7 top-1 left-1 bg-slate-200 text-white rounded-md p-1.5 shadow-lg backdrop-blur-sm transition-transform hover:scale-110 z-20"
-                title="Delete Board"
-            >
+                title="Delete Board">
                 <SvgDelete class="w-full h-full" />
             </button>
-
             <button 
                 v-if="historyGridIndex(cell) === 8 && playGame"
                 @click.stop="resetGrid = true; setGrid(cell, grid_[0].length, grid_.length)" 
                 class="absolute w-8 h-8 bottom-1 right-1 bg-slate-100 hover:bg-slate-200 text-white rounded-md p-1.5 shadow-lg backdrop-blur-sm transition-transform hover:scale-110 z-20 flex items-center justify-center"
-                title="Restart from here"
-            >
+                title="Restart from here">
                 <SvgRestart class="w-10" />
             </button>
         </div>  
@@ -42,15 +36,13 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-// import { useTictactoe2 } from '@/stores/tictactoe2'
 
 const tictactoe = useTictactoe2()
-const {playGame, resetGrid, gameGrid, winningCells, historyGames, gameEnd} = storeToRefs(tictactoe)
+const {playGame, resetGrid, gameGrid, winningCells, squareSize, historyGames, useScreenWidth, useCustomSize, gameEnd, numberOfCols, numberOfRows} = storeToRefs(tictactoe)
 const {deleteGrid, setGrid, inSubGrid, play, cellValue, historyGridIndex} = tictactoe
 
 const boxesContainer = ref(null)
 const numberOfBoxes = ref(0)
-const squareLength = ref(40)
 const boxWidth = ref('0px')
 const boxHeight = ref('0px')
 const width = ref(0)
@@ -59,11 +51,10 @@ const grid = ref([])
 const style = ref({})
 const grid_ = ref([])
 
-
 const handleClick = (cell) => {
     if (!playGame.value) return;
 
-    if ((!gameGrid.value.length && cell.row !== 0) || gameEnd.value) {
+    if ((!gameGrid.value.length) || gameEnd.value) {
         setGrid(cell, grid_.value[0].length, grid_.value.length);
     } 
     else if (gameGrid.value.length && !gameEnd.value && inSubGrid(cell)) {
@@ -73,6 +64,16 @@ const handleClick = (cell) => {
         }
     }
 }
+
+const gridSizing = computed(() => {
+    if (useCustomSize.value) {        
+        return {
+            display: 'grid',
+            gridTemplateColumns: `repeat(${numberOfCols.value}, ${squareSize.value}px)`,
+            gridTemplateRows: `repeat(${numberOfRows.value}, ${squareSize.value}px)`,
+        }
+    }
+})
 
 const getCellValue = (cell) => {
     if (!playGame.value) return '';
@@ -126,39 +127,58 @@ const getCellClasses = (cell) => {
     return classes.join(' ');
 }
 
-
 function resizerFunction () {    
-    squareLength.value = 55
+    squareSize.value = 50
 
-    const cssObject = getComputedStyle(document.body)
-    width.value = +cssObject.getPropertyValue('width').slice(0, -2)
-    height.value = +cssObject.getPropertyValue('height').slice(0, -2)
+    if (useScreenWidth.value) {        
+        const cssObject = getComputedStyle(document.body)
+        width.value = +cssObject.getPropertyValue('width').slice(0, -2)
+        height.value = +cssObject.getPropertyValue('height').slice(0, -2)
+        
+        const numberOfboxesV = height.value / squareSize.value
+        const numberOfboxesH = width.value  / squareSize.value 
+        
+        boxWidth.value = squareSize.value + ((width.value % squareSize.value) / numberOfboxesH) + 'px'
+        boxHeight.value = squareSize.value + ((height.value % squareSize.value) / numberOfboxesV) + 'px'
+        
+        style.value = {
+            'width' : boxWidth.value,
+            'height': boxHeight.value
+        }
 
-    const numberOfboxesV = height.value / squareLength.value
-    const numberOfboxesH = width.value  / squareLength.value 
-
-    boxWidth.value = squareLength.value + ((width.value % squareLength.value) / numberOfboxesH) + 'px'
-    boxHeight.value = squareLength.value + ((height.value % squareLength.value) / numberOfboxesV) + 'px'
-
-    style.value = {
-        'width' : boxWidth.value,
-        'height': boxHeight.value
+        let decimalIndexH = numberOfboxesH.toString().indexOf('.') > 0 ? numberOfboxesH.toString().indexOf('.') : numberOfboxesH
+        let decimalIndexV = numberOfboxesV.toString().indexOf('.') > 0 ? numberOfboxesV.toString().indexOf('.') : numberOfboxesV
+        
+        let realNumberOfBoxesV = parseInt(numberOfboxesV.toString().slice(0, decimalIndexV))
+        let realNumberOfBoxesH = parseInt(numberOfboxesH.toString().slice(0, decimalIndexH))
+        
+        grid_.value = Array.from({length: realNumberOfBoxesV}, (_, row) => 
+            Array.from({length: realNumberOfBoxesH}, (_, col) => ({
+                row, col, value: ''
+            }))
+        )
+        
+        grid.value = grid_.value.flat()
+        numberOfBoxes.value = realNumberOfBoxesH * realNumberOfBoxesV   
     }
 
-    let decimalIndexH = numberOfboxesH.toString().indexOf('.') > 0 ? numberOfboxesH.toString().indexOf('.') : numberOfboxesH
-    let decimalIndexV = numberOfboxesV.toString().indexOf('.') > 0 ? numberOfboxesV.toString().indexOf('.') : numberOfboxesV
-    
-    let realNumberOfBoxesV = parseInt(numberOfboxesV.toString().slice(0, decimalIndexV))
-    let realNumberOfBoxesH = parseInt(numberOfboxesH.toString().slice(0, decimalIndexH))
+    if (useCustomSize.value) {
+        boxesContainer.value.style.width = squareSize.value * numberOfRows.value
 
-    grid_.value = Array.from({length: realNumberOfBoxesV}, (_, row) => 
-        Array.from({length: realNumberOfBoxesH}, (_, col) => ({
-            row, col, value: ''
-        }))
-    )
+        style.value = {
+            'width' : squareSize.value + 'px',
+            'height': squareSize.value + 'px',
+        }
 
-    grid.value = grid_.value.flat()
-    numberOfBoxes.value = realNumberOfBoxesH * realNumberOfBoxesV    
+        grid_.value = Array.from({length: numberOfCols.value}, (_, row) => 
+            Array.from({length: numberOfRows.value}, (_, col) => ({
+                row, col, value: ''
+            }))
+        )
+
+        grid.value = grid_.value.flat()
+        numberOfBoxes.value = numberOfCols.value * numberOfRows.value        
+    }
 }
 
 onMounted(() => {
@@ -182,7 +202,7 @@ watch(() => boxesContainer.value, (newValue) => {
 }
 
 .boxes-container {
-    @apply flex flex-wrap uppercase w-full h-full;
+    @apply uppercase h-full;
 }
 /* 1. Empty/Background Cells */
 .empty-cell {

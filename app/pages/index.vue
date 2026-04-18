@@ -31,7 +31,9 @@ const buttonColor = computed(() => {
    currentPage.value === 'dictionary' ? 'bg-sky-700 hover:bg-sky-900' :
     currentPage.value === 'scrambled_words' ? 'bg-pink-600 hover:bg-pink-800' :
     currentPage.value === 'random_words' ? 'bg-violet-500 hover:bg-violet-700' :
-    currentPage.value === 'tictactoe' ? 'bg-orange-600 hover:bg-orange-800' :
+    currentPage.value === 'tictactoe' ? 'bg-orange-600 hover:bg-orange-800' : 
+    currentPage.value === 'geography' ? 'bg-blue-600 hover:bg-blue-800' :
+    currentPage.value === 'quiz' ? 'bg-amber-500 bg-amber-800' :
      'bg-teal-700 hover:bg-teal-900'
 })
 

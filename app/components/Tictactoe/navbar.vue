@@ -63,7 +63,7 @@
           <div class="w-16 h-16 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-500/20">
             <span class="text-3xl">⚠️</span>
           </div>
-          <h2 class="text-2xl font-black mb-2 text-white uppercase tracking-widest">Reset Match?</h2>
+          <h2 class="text-2xl font-black mb-2 text-white uppercase tracking-widest">Reset Match</h2>
           <p class="text-slate-400 text-sm mb-8">This will wipe all scores and progress. Are you sure?</p>
 
           <div class="flex gap-4">
@@ -167,5 +167,6 @@ const resetGame = () => {
   } else {
     clearAll()
   }
+  openModal.value = false
 }
 </script>
