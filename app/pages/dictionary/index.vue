@@ -60,10 +60,9 @@
 
 <script setup lang="ts"> 
 import { ref, computed } from 'vue'
-// Make sure allDefinitions is imported here, e.g.:
-// import { allDefinitions } from '@/utils/dictionaryData'
-
 const searchWord = ref('')
+const res = await useFetch<string[]>('/word_definitions.json')
+const allDefinitions: string[] = res.data.value as string[]
 
 const searchedWords = computed(() => {
   // Guard clause in case the input is empty and you don't want to render 10,000 words at once

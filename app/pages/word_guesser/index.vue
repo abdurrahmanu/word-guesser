@@ -13,6 +13,18 @@
 
     <div class="overflow-auto flex-1 py-4 custom-scrollbar">
       <div class="flex-1 space-y-4 max-w-2xl w-[95%] mx-auto">
+        <div class="bg-slate-800/80 p-3 rounded-xl shadow-lg border border-slate-700 backdrop-blur-sm">
+          <label class="block font-bold text-slate-200 mb-3">Select Vocabulary</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-medium">
+            <template v-for="(vocabulary, index) in vocabularyTypes" :key="index">
+              <button
+              @click="difficulty = vocabulary" 
+              :class="[difficulty === vocabulary ? 'bg-teal-600 text-white border-teal-500 shadow-md shadow-teal-500/20' : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500']" class="uppercase border px-3 py-3 rounded-xl text-xs font-bold transition-all">
+                {{ vocabulary }}
+              </button>
+            </template>
+          </div>
+        </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="bg-slate-800/80 p-3 rounded-xl shadow-lg border border-slate-700 backdrop-blur-sm">
@@ -92,15 +104,6 @@
           </label>
         </div>
       
-        <div class="bg-slate-800/80 p-3 rounded-xl shadow-lg border border-slate-700 backdrop-blur-sm">
-          <label class="block font-bold text-slate-200 mb-3">Select Vocabulary Difficulty</label>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-medium">
-            <button @click="difficulty = 'all'" :class="[difficulty === 'all' ? 'bg-teal-600 text-white border-teal-500 shadow-md shadow-teal-500/20' : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500']" class="uppercase border px-3 py-3 rounded-xl text-xs font-bold transition-all">All Words</button>
-            <button @click="difficulty = 'easy'" :class="[difficulty === 'easy' ? 'bg-teal-600 text-white border-teal-500 shadow-md shadow-teal-500/20' : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500']" class="uppercase border px-3 py-3 rounded-xl text-xs font-bold transition-all">Easy</button>
-            <button @click="difficulty = 'medium'" :class="[difficulty === 'medium' ? 'bg-teal-600 text-white border-teal-500 shadow-md shadow-teal-500/20' : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500']" class="uppercase border px-3 py-3 rounded-xl text-xs font-bold transition-all">Medium</button>
-            <button @click="difficulty = 'hard'" :class="[difficulty === 'hard' ? 'bg-teal-600 text-white border-teal-500 shadow-md shadow-teal-500/20' : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500']" class="uppercase border px-3 py-3 rounded-xl text-xs font-bold transition-all">Hard</button>
-          </div>
-        </div>
 
       </div>
     </div>
@@ -118,7 +121,7 @@
 <script setup>
 const router = useRouter()
 const store = useGameStore()
-const {teamOne, teamTwo, newWords, useDefinition, toggleFirstToReach, firstToReach, difficulty, settings, addWordsError, addWordsSuccessful, useSound} = storeToRefs(store)
+const {teamOne, teamTwo, newWords, vocabularyTypes, useDefinition, toggleFirstToReach, firstToReach, difficulty, settings, addWordsError, addWordsSuccessful, useSound} = storeToRefs(store)
 const {addWords} = store
 
 function startGame() {

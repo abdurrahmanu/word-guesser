@@ -157,7 +157,7 @@ const settings = ref({
 })
 
 const currentQuestionIndex = ref(0)
-const currentQuestion = ref(quizData[0])
+const currentQuestion = ref(quizData[quizData.length * Math.random()])
 const gameState = ref<'playing' | 'feedback' | 'gameover'>('playing')
 
 const guess = ref('')

@@ -53,7 +53,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-// Assuming allDefinitions is imported or available in your context
+
+const res = await useFetch('/word_definitions.json')
+const allDefinitions: any = res.data.value
 
 const wordsArray = Object.keys(allDefinitions)
 
