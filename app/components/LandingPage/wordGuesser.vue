@@ -9,7 +9,7 @@
       <div class="flex-1 bg-slate-800/80 p-4 border space-y-2 border-slate-700 shadow-xl">
         <h2 class="font-bold text-lg text-white flex items-center gap-3">How to Play</h2>
         <p class="text-sm text-slate-300 leading-relaxed text-justify">
-          Split into teams. One player (the Explainer) looks at the hidden geography word. They must describe that word to their teammate (the Guesser) without actually saying it! The Guesser must correctly guess the word before the timer runs out. 
+          Split into teams. One player (the Explainer) looks at the hidden word. They must describe that word to their teammate (the Guesser) without actually saying it! The Guesser must correctly guess the word before the timer runs out. 
         </p>
         <p class="text-sm text-slate-300 leading-relaxed text-justify">
           Stuck? You can forfeit your turn and pass. There is a transfer of turn after the timeout!
@@ -25,7 +25,7 @@
           </li>
           <li class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
             <p class="text-xs text-teal-400 font-extrabold tracking-wide mb-1">THE GUESSER</p> 
-            <p class="text-sm text-slate-300">Cannot see the screen. Must listen closely and shout out the correct country or capital.</p>
+            <p class="text-sm text-slate-300">Cannot see the screen. Must listen closely and shout out the correct word.</p>
           </li>
         </ul>
       </div>
