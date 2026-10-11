@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4 font-sans">
+  <div class="min-h-screen bg-zinc-800 flex flex-col items-center py-10 px-4 font-sans">
     <h1 class="text-3xl font-bold mb-8 text-blue-700">Phone Call Selector</h1>
 
     <!-- Setup Screen -->
@@ -12,7 +12,7 @@
           v-model.number="numWinners"
           type="number"
           min="1"
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full text-black px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -23,8 +23,8 @@
         <input
           v-model.number="numTotal"
           type="number"
-          :min="numWinners"
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          min="5"
+          class="w-full text-black px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
