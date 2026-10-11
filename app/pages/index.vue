@@ -56,7 +56,8 @@ const goTo = () => {
 }
 
 const normalizedButtonText = computed(() => {
-  return currentPage.value.replace('_', ' ')
+if (currentPage.value === "pattern_match") return "Multi Choice"
+  else return currentPage.value.replace('_', ' ')
 })
 </script>
 
