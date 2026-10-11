@@ -93,6 +93,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+// Assuming useSounds is auto-imported by Nuxt 3 from your composables directory
+const {
+  playForfeitSound,
+  playAlarm,
+  playKillTurnSound,
+  playRevealSound,
+  playTransferTurnSound,
+  playWinSound,
+  vibrateOnIndexPress
+} = useSounds()
+
 interface Card {
   id: number
   isWinner: boolean
@@ -104,30 +115,17 @@ const numTotal = ref(10)
 const gameState = ref<'setup' | 'playing'>('setup')
 const cards = ref<Card[]>([])
 
-// Audio references initialized lazily
-let winAudio: HTMLAudioElement | null = null
-let loseAudio: HTMLAudioElement | null = null
-
-const initAudio = () => {
-  if (import.meta.client) {
-    if (!winAudio) winAudio = new Audio('/win.mp3')
-    if (!loseAudio) loseAudio = new Audio('/lose.mp3')
-  }
-}
-
 const startGame = () => {
   if (numWinners.value > numTotal.value) {
     alert("Number of callers cannot be greater than the total number of boxes.")
     return
   }
   
-  initAudio() // Initialize audio upon first user interaction to bypass browser autoplay blocks
   generateAndShuffleCards()
   gameState.value = 'playing'
 }
 
 const generateAndShuffleCards = () => {
-  // Create an array with the exact number of winners and losers
   let initialCards = Array(numTotal.value).fill(false)
   for (let i = 0; i < numWinners.value; i++) {
     initialCards[i] = true
@@ -139,7 +137,6 @@ const generateAndShuffleCards = () => {
     ;[initialCards[i], initialCards[j]] = [initialCards[j], initialCards[i]]
   }
 
-  // Map to reactive state objects
   cards.value = initialCards.map((isWinner, index) => ({
     id: index,
     isWinner,
@@ -152,19 +149,17 @@ const handleCardClick = (index: number) => {
   
   if (card.isFlipped) return // Prevent clicking already flipped cards
 
+  // Trigger haptic feedback when a box is pressed
+  vibrateOnIndexPress?.()
+
   card.isFlipped = true
 
-  // Play corresponding sound
+  // Play corresponding sound from your composable
   if (card.isWinner) {
-    if (winAudio) {
-      winAudio.currentTime = 0 // Rewind to start if clicked rapidly
-      winAudio.play().catch(e => console.warn('Audio play prevented', e))
-    }
+    playWinSound?.()
   } else {
-    if (loseAudio) {
-      loseAudio.currentTime = 0
-      loseAudio.play().catch(e => console.warn('Audio play prevented', e))
-    }
+    // Used playForfeitSound for empty boxes. You can swap this with playRevealSound if preferred.
+    playForfeitSound?.()
   }
 }
 
