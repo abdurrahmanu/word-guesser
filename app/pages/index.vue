@@ -24,7 +24,7 @@
 const store = useGameStore()
 const {currentPage} = storeToRefs(store)
 
-const pages: Choices[] = ['word_guesser', 'dictionary', 'random_words', 'scrambled_words', 'tictactoe', 'geography', 'quiz', 'boxed']
+const pages: Choices[] = ['word_guesser', 'dictionary', 'random_words', 'scrambled_words', 'tictactoe', 'geography', 'quiz', 'pattern_match']
 
 const buttonColor = computed(() => {
   return currentPage.value === 'word_guesser' ? 'bg-teal-600 hover:bg-teal-500' :
