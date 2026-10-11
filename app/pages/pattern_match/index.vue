@@ -3,11 +3,11 @@
     <!-- Setup Screen -->
     <div v-if="gameState === 'setup'" class="flex-1 flex flex-col items-center justify-center w-full px-4">
       <div class="bg-[#1a2332] p-8 rounded-2xl border border-slate-700 shadow-2xl w-full max-w-md">
-        <h1 class="text-2xl font-bold mb-8 text-center tracking-wider text-slate-200">CALL SELECTOR</h1>
+        <h1 class="text-2xl font-bold mb-8 text-center tracking-wider text-slate-200">RANDOM SELECTOR</h1>
         
         <div class="mb-6">
           <label class="block text-slate-400 text-sm font-bold mb-2 uppercase tracking-wide">
-            Number of Calls (Winners)
+            Number of Winners
           </label>
           <input
             v-model.number="numWinners"
@@ -19,7 +19,7 @@
 
         <div class="mb-8">
           <label class="block text-slate-400 text-sm font-bold mb-2 uppercase tracking-wide">
-            Total Number of Students
+            Total Number of Boxes
           </label>
           <input
             v-model.number="numTotal"
@@ -78,17 +78,21 @@
               <span class="text-4xl sm:text-5xl text-white font-bold pb-1 shadow-black drop-shadow-md">?</span>
             </template>
             
-            <!-- Winner State -->
+            <!-- Winner State (Glowing Checkmark) -->
             <template v-else-if="card.isWinner">
               <div class="flex flex-col items-center animate-bounce">
-                <span class="text-3xl sm:text-4xl mb-1">📞</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-10 h-10 sm:w-12 sm:h-12 text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.8)]">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
               </div>
             </template>
             
-            <!-- Empty State -->
+            <!-- Empty/Lose State (Red X) -->
             <template v-else>
               <div class="flex flex-col items-center">
-                <span class="text-3xl sm:text-4xl opacity-50">❌</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-10 h-10 sm:w-12 sm:h-12 text-red-500 opacity-80">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </div>
             </template>
           </div>
@@ -124,7 +128,7 @@ const cards = ref<Card[]>([])
 
 const startGame = () => {
   if (numWinners.value > numTotal.value) {
-    alert("Number of callers cannot be greater than the total number of boxes.")
+    alert("Number of winners cannot be greater than the total number of boxes.")
     return
   }
   
