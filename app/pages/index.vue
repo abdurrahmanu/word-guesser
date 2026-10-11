@@ -8,6 +8,7 @@
       <LandingPageQuiz v-if="currentPage === 'quiz'" />
       <LandingPageRandomWords v-if="currentPage === 'random_words'" />
       <LandingPageScrambledWords v-if="currentPage === 'scrambled_words'" />
+      <LandingPagePatternMatch v-if="currentPage === 'pattern_match'" />
     </div>
     
     <div>
